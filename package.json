@@ -1,5 +1,6 @@
 {
-  "name": "schaakspel-vervang",
+  "name": "schaakspel",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -7,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",

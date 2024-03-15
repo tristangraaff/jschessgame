@@ -1,4 +1,6 @@
-const { incrementString, decrementString } = require("../code/general-utils.js");
+//const { incrementString, decrementString } = require("../code/general-utils.js");
+import { incrementString, decrementString } from "../code/general-utils.js";
+//import decrementString from "../code/general-utils.js";
 
 describe('incrementString', () => {
     it('should increment the last character of a string with 1 and return the full string', () => {

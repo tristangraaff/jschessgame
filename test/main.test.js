@@ -1,3 +1,7 @@
+///**
+// * @jest-environment jsdom
+// */
+
 import PawnGameLogic from "../code/main.js";
 
 describe('PawnGameLogic', () => {

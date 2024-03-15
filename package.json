@@ -16,5 +16,8 @@
   "dependencies": {
     "jest": "^29.7.0"
   },
-  "transform": {}
+  "transform": {},
+  "jest": {
+    "testEnvironment": "node"
+ }
 }

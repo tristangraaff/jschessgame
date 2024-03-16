@@ -1,13 +1,11 @@
 import { incrementString, decrementString } from "./general-utils.js";
 
-//Next steps:
+// Next steps:
 // Find out why non imported test code is tested
 // Add Git project
 // Test existing DOM code
 // Add turn logic
-//To run jest with ES6: node --experimental-vm-modules node_modules/jest/bin/jest.js
-
-
+// To run jest with ES6: node --experimental-vm-modules node_modules/jest/bin/jest.js
 
 
 const log = (input) => {

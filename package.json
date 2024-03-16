@@ -19,5 +19,8 @@
   "transform": {},
   "jest": {
     "testEnvironment": "node"
- }
+  },
+  "devDependencies": {
+    "jest-environment-jsdom": "^29.7.0"
+  }
 }

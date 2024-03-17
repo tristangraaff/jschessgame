@@ -1,11 +1,21 @@
 import { incrementString, decrementString } from "./general-utils.js";
 
+// To run jest with ES6: node --experimental-vm-modules node_modules/jest/bin/jest.js
+
 // Next steps:
 // Find out why non imported test code is tested
-// Add Git project
 // Test existing DOM code
-// Add turn logic
-// To run jest with ES6: node --experimental-vm-modules node_modules/jest/bin/jest.js
+// Add turn logic / win condition
+// add movement
+// add logic per piece:
+  //knight
+  //bishop
+  //rook
+  //king
+  //queen
+// add board to JS
+//change PawnGameLogic to JS board
+
 
 
 const log = (input) => {
@@ -20,11 +30,33 @@ class GameState {
   static turnCount = 1;
   static turnPlayer = "white";
   static activeGame = true;
+  static endOfTurn = false;
+  static board = Array.from({ length: 8 }, () => Array(8).fill(false));
 
-  checkWinCondition() {
+  // checkmate
+  // resignation
+
+  //stalemate
+  //insufficient material
+  // 50 move-rule
+  // repetition
+  // agreement
+
+  static checkForCheckmate() {
 
   };
+
+  static changeTurn() {
+    if (this.endOfTurn) {
+      this.turnCount += 1;
+      this.turnPlayer = (this.turnPlayer === "white") ? "black" : "white";
+      this.endOfTurn = false;
+    };
+  };
 };
+
+console.log(GameState.turnCount);
+console.log(GameState.board);
 
 export default class PawnGameLogic {
   constructor(color, number) {
@@ -40,6 +72,41 @@ export default class PawnGameLogic {
       return this.color === "white" ? [1, 2] : [-1, -2];
     };
   };
+};
+
+class KnightLogic {
+  constructor(color, number) {
+    this.color = color;
+    this.number = number;
+    this.hasMoved = false;
+  };
+
+  getValidMoves() {
+    // +cijfer -tweeLetters
+    // +cijfer +tweeLetters
+    // +tweeCijfers +letter
+    // +tweeCijfers -letter
+    // -cijfer -tweeLetters
+    // -cijfer +tweeLetters
+    // -tweeCijfers +letter
+    // -tweeCijfers -letter
+  };
+};
+
+class BishopLogic {
+
+};
+
+class RookLogic {
+
+};
+
+class QueenLogic {
+
+};
+
+class KingLogic {
+
 };
 
 class domManipulation {

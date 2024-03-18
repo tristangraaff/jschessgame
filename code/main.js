@@ -1,4 +1,7 @@
-import { incrementString, decrementString } from "./general-utils.js";
+import Piece from "./pieceLogic.js";
+import { PawnGameLogic, BishopLogic, KnightLogic, RookLogic, QueenLogic, KingLogic, }  from "./pieceLogic.js";
+import DomManipulation from "./dom.js";
+import { PieceSelector } from "./dom.js";
 
 // To run jest with ES6: node --experimental-vm-modules node_modules/jest/bin/jest.js
 
@@ -22,16 +25,11 @@ const log = (input) => {
   console.log(input);
 };
 
-class Piece {
-
-};
-
 class GameState {
   static turnCount = 1;
   static turnPlayer = "white";
   static activeGame = true;
   static endOfTurn = false;
-  static board = Array.from({ length: 8 }, () => Array(8).fill(false));
 
   // checkmate
   // resignation
@@ -55,94 +53,53 @@ class GameState {
   };
 };
 
-console.log(GameState.turnCount);
-console.log(GameState.board);
-
-export default class PawnGameLogic {
-  constructor(color, number) {
-    this.color = color;
-    this.number = number;
-    this.hasMoved = false;
-  };
-
-  getValidMoves() {
-    if (this.hasMoved) {
-      return this.color === "white" ? [1] : [-1];
-    } else if (!this.hasMoved) {
-      return this.color === "white" ? [1, 2] : [-1, -2];
-    };
-  };
-};
-
-class KnightLogic {
-  constructor(color, number) {
-    this.color = color;
-    this.number = number;
-    this.hasMoved = false;
-  };
-
-  getValidMoves() {
-    // +cijfer -tweeLetters
-    // +cijfer +tweeLetters
-    // +tweeCijfers +letter
-    // +tweeCijfers -letter
-    // -cijfer -tweeLetters
-    // -cijfer +tweeLetters
-    // -tweeCijfers +letter
-    // -tweeCijfers -letter
-  };
-};
-
-class BishopLogic {
-
-};
-
-class RookLogic {
-
-};
-
-class QueenLogic {
-
-};
-
-class KingLogic {
-
-};
-
-class domManipulation {
-  constructor(classInstance) {
-    this.pieceLogicAndState = classInstance;
-    this.piece = document.querySelector(`.pawn_${this.pieceLogicAndState.color}${this.pieceLogicAndState.number}`);
-    this.location = this.piece.parentElement;
-  };
-
-  getValidDomBoxes() {
-    const classesArray = this.location.classList;
-    const specificBoxClass = classesArray[classesArray.length - 1];
-    let validDomBoxes = [];
-
-    for (let i = 0; i < this.pieceLogicAndState.getValidMoves().length; i++) {
-      const validBoxClass = incrementString(specificBoxClass, this.pieceLogicAndState.getValidMoves()[i]);
-      const validDomBox = document.querySelector(`.${validBoxClass}`);
-      validDomBoxes.push(validDomBox);
-    };
-
-    return validDomBoxes;
-  };
-};
-
 class PieceFactory {
   constructor() {
     this.activePieces = [];
     this.capturedPieces = [];
+    this.board = Array.from({ length: 8 }, () => Array(8).fill(false));
   };
+  
+  addPiece(pieceType, color, row, col) {
+    this.board[row][col] = `${pieceType}${color}${row + 1}`;
+  }
+  
+  addPiecesToBoard() {
+    for (let i = 0; i < 8; i++) {
+      this.addPiece("pawn", "Black", 1, i);
+      this.addPiece("pawn", "White", 6, i);
+    }
 
+    this.addPiece("rook", "Black", 0, 0);
+    this.addPiece("rook", "Black", 0, 7);
+    this.addPiece("rook", "White", 7, 0);
+    this.addPiece("rook", "White", 7, 7);
+
+    this.addPiece("knight", "Black", 0, 1);
+    this.addPiece("knight", "Black", 0, 6);
+    this.addPiece("knight", "White", 7, 1);
+    this.addPiece("knight", "White", 7, 6);
+
+    this.addPiece("bishop", "Black", 0, 2);
+    this.addPiece("bishop", "Black", 0, 5);
+    this.addPiece("bishop", "White", 7, 2);
+    this.addPiece("bishop", "White", 7, 5);
+
+    this.addPiece("queen", "Black", 0, 3);
+    this.addPiece("queen", "White", 7, 3);
+
+    this.addPiece("king", "Black", 0, 4);
+    this.addPiece("king", "White", 7, 4);
+
+    console.log(this.board);
+  };
+  
   activatePieces() {
     for (let i = 1; i < 9; i++) {
       const pawnWhiteLogic = new PawnGameLogic("white", i);
-      const pawnWhiteDom = new domManipulation(pawnWhiteLogic);
+      const pawnWhiteDom = new DomManipulation(pawnWhiteLogic);
       const pawnBlackLogic = new PawnGameLogic("black", i);
-      const pawnBlackDom = new domManipulation(pawnBlackLogic);
+      const pawnBlackDom = new DomManipulation(pawnBlackLogic);
       this.activePieces.push(pawnWhiteDom);
       this.activePieces.push(pawnBlackDom);
     };
@@ -151,68 +108,6 @@ class PieceFactory {
 
 const pieces = new PieceFactory();
 pieces.activatePieces();
-
-class PieceSelector {
-  constructor(pieces) {
-    this.pieces = pieces; // Reference to the PieceFactory or activePieces array
-    this.clickedBox = null;
-    this.board = document.getElementById("board");
-    this.board.addEventListener("click", this.handleBoxClick.bind(this));
-    console.log("Turn count:", GameState.turnCount);
-    console.log("Turn player:", GameState.turnPlayer);
-  };
-
-  handleBoxClick(event) {
-    const clickedBox = event.target.closest(".box");
-    if (!clickedBox) return;
-    const pieceClassNames = clickedBox.firstElementChild?.className;
-    if (pieceClassNames && this.clickedBox === null) {
-      this.clickedBox = clickedBox;
-      const correspondingPiece = this.findCorrespondingActivePiece(pieceClassNames);
-      console.log("Clicked piece:", correspondingPiece);
-      const domBoxes = correspondingPiece.getValidDomBoxes();
-      this.createColorContainer(domBoxes);
-    } else if (this.clickedBox === clickedBox) {
-        this.clickedBox = null;
-        this.removeColorContainer();
-    } else if (this.clickedBox !== clickedBox && this.clickedBox !== null) {
-        this.clickedBox = clickedBox;
-        this.removeColorContainer();
-        const correspondingPiece = this.findCorrespondingActivePiece(pieceClassNames);
-        console.log("Clicked piece:", correspondingPiece);
-        const domBoxes = correspondingPiece.getValidDomBoxes();
-        this.createColorContainer(domBoxes);
-    };
-  };
-
-  findCorrespondingActivePiece(pieceClassNames) {
-    return this.pieces.activePieces.find(
-      (domPiece) => domPiece.piece.className === pieceClassNames
-    );
-  };
-
-  createColorContainer(domBoxes) {
-    domBoxes.forEach((box) => {
-      const container = document.createElement("div");
-      container.classList.add("colorContainer");
-      box.appendChild(container);
-    });
-
-    const colorContainers = document.querySelectorAll(".colorContainer");
-    colorContainers.forEach((container) => {
-      container.style.backgroundColor = "rgba(0, 0, 255, 0.5)";
-      container.style.opacity = "0.7";
-      container.style.width = "60px";
-      container.style.height = "60px";
-    });
-  };
-
-  removeColorContainer() {
-    const colorContainers = document.querySelectorAll(".colorContainer");
-    colorContainers.forEach((container) => {
-      container.remove();
-    });
-  };
-};
+pieces.addPiecesToBoard();
 
 const pieceSelector = new PieceSelector(pieces);

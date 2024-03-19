@@ -10,14 +10,9 @@ import { PieceSelector } from "./dom.js";
 // Test existing DOM code
 // Add turn logic / win condition
 // add movement
-// add logic per piece:
-  //knight
-  //bishop
-  //rook
-  //king
-  //queen
-// add board to JS
-//change PawnGameLogic to JS board
+// add logic per piece: special rules (rokeren, en passant)
+// write Piece class
+// add capturing pieces 
 
 const log = (input) => {
   console.log(input);

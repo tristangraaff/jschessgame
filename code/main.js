@@ -19,13 +19,11 @@ import { PieceSelector } from "./dom.js";
 // add board to JS
 //change PawnGameLogic to JS board
 
-
-
 const log = (input) => {
   console.log(input);
 };
 
-class GameState {
+export default class GameState {
   static turnCount = 1;
   static turnPlayer = "white";
   static activeGame = true;

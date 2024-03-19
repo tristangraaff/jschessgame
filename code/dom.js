@@ -1,4 +1,5 @@
 import { incrementString, decrementString } from "./general-utils.js";
+import GameState from "./main.js";
 
 export default class DomManipulation {
     constructor(classInstance) {

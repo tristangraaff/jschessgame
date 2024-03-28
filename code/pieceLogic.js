@@ -1,20 +1,31 @@
+import { factory } from "./main.js";
+
 export default class Piece {
+
   constructor(color, number) {
     this.color = color;
     this.number = number;
     this.hasMoved = false;
     this.validMoves = [];
+    this.dependencyInjection = import { factory } from "main.js";
   };
 
+  checkIfSquareIsEmpty() {
+    console.log(factory);
+    // while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+    //   // Check if the square is empty or contains an opponent's piece
+    //   if (!board[newRow][newCol]) {
+    //     validMoves.push([newRow, newCol]);
+    //   } else {
+    //     // Stop checking in this direction if there's an obstacle
+    //     break;
+    //   }
+    // };  
+  };
 
-  // while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-  //   // Check if the square is empty or contains an opponent's piece
-  //   if (!board[newRow][newCol]) {
-  //     validMoves.push([newRow, newCol]);
-  //   } else {
-  //     // Stop checking in this direction if there's an obstacle
-  //     break;
-  //   }
+  checkIfPositionIsOnBoard() {
+
+  };
 
     // // Check if the new position is within the board boundaries
   // if (newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize) {
@@ -25,21 +36,20 @@ export default class Piece {
   // }
 };
 
-export class PawnGameLogic extends Piece {
-    constructor(color, number) {
-      this.color = color;
-      this.number = number;
-      this.hasMoved = false;
-    };
-  
-    getValidMoves() {
-      if (this.hasMoved) {
-        return this.color === "white" ? [1, 0] : [-1, 0];
-      } else if (!this.hasMoved) {
-        return this.color === "white" ? [[1, 0], [2, 0]] : [[-1, 0], [-2, 0]];
-      };
+export class PawnGameLogic extends Piece {  
+  getValidMoves() {
+    if (this.hasMoved) {
+      this.validMoves = this.color === "white" ? [1, 0] : [-1, 0];
+    } else if (!this.hasMoved) {
+      this.validMoves = this.color === "white" ? [[1, 0], [2, 0]] : [[-1, 0], [-2, 0]];
     };
   };
+};
+
+const pawn = new PawnGameLogic("black", 2);
+pawn.checkIfSquareIsEmpty();
+console.log(pawn);
+
 
 
 export class BishopLogic extends Piece {
@@ -159,6 +169,7 @@ export class KnightLogic extends Piece {
       [1, -2],
       [1, 2],
       [2, -1],
-      [2, 1]]; 
+      [2, 1]
+    ]; 
   };
 };

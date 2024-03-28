@@ -46,7 +46,7 @@ export default class GameState {
   };
 };
 
-class PieceFactory {
+export class PieceFactory {
   constructor() {
     this.activePieces = [];
     this.capturedPieces = [];
@@ -97,10 +97,18 @@ class PieceFactory {
       this.activePieces.push(pawnBlackDom);
     };
   };
+
+  get board() {
+    return this._board;
+  };
+
+  set board(newBoard) {
+    this._board = newBoard;
+  };
 };
 
-const pieces = new PieceFactory();
-pieces.activatePieces();
-pieces.addPiecesToBoard();
+export const factory = new PieceFactory();
+factory.activatePieces();
+factory.addPiecesToBoard();
 
 const pieceSelector = new PieceSelector(pieces);

@@ -2,6 +2,11 @@ import Piece from "./pieceLogic.js";
 import { PawnGameLogic, BishopLogic, KnightLogic, RookLogic, QueenLogic, KingLogic, }  from "./pieceLogic.js";
 import DomManipulation from "./dom.js";
 import { PieceSelector } from "./dom.js";
+import { EventService } from "./event.service.js";
+
+eventService.on("pieceMoved", (newPosition) => {
+  console.log("test");
+});
 
 // To run jest with ES6: node --experimental-vm-modules node_modules/jest/bin/jest.js
 
@@ -111,4 +116,4 @@ export const factory = new PieceFactory();
 factory.activatePieces();
 factory.addPiecesToBoard();
 
-const pieceSelector = new PieceSelector(pieces);
+//const pieceSelector = new PieceSelector(pieces);

@@ -1,17 +1,24 @@
 import { factory } from "./main.js";
+import { EventService } from "./event.service.js";
 
 export default class Piece {
 
-  constructor(color, number) {
+  constructor(color, number, eventService) {
     this.color = color;
     this.number = number;
     this.hasMoved = false;
     this.validMoves = [];
-    this.dependencyInjection = import { factory } from "main.js";
+    this.dependencyInjection = this.eventService = eventService;
   };
 
+  movePiece(newPosition) {
+    // Update the piece position
+    // Emit an event to notify other components
+    this.eventService.emit('pieceMoved', newPosition);
+  }
+
   checkIfSquareIsEmpty() {
-    console.log(factory);
+    //console.log(factory);
     // while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
     //   // Check if the square is empty or contains an opponent's piece
     //   if (!board[newRow][newCol]) {

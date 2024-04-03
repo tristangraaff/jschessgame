@@ -1,8 +1,6 @@
 import { factory } from "./main.js";
-import { EventService } from "./event.service.js";
 
 export default class Piece {
-
   constructor(color, number, eventService) {
     this.color = color;
     this.number = number;
@@ -11,14 +9,19 @@ export default class Piece {
     this.dependencyInjection = this.eventService = eventService;
   };
 
-  movePiece(newPosition) {
-    // Update the piece position
-    // Emit an event to notify other components
-    this.eventService.emit('pieceMoved', newPosition);
-  }
+  calculatePosition(currentPosition, move) {
+    let currentBoardState = factory._board;
+    const currentPositionOnBoard = factory._board[currentPosition[0]][currentPosition[1]];
+    console.log(currentPositionOnBoard);
+    console.log(move);
+    const newPositionOnBoard = factory._board[currentPosition[0] + move[0]];
+    console.log(factory._board);
+  };
 
-  checkIfSquareIsEmpty() {
-    //console.log(factory);
+  checkIfSquareIsEmpty(move) {
+    console.log(factory.board);
+    factory.board = "a";
+    console.log(factory.board);
     // while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
     //   // Check if the square is empty or contains an opponent's piece
     //   if (!board[newRow][newCol]) {
@@ -30,7 +33,7 @@ export default class Piece {
     // };  
   };
 
-  checkIfPositionIsOnBoard() {
+  checkIfPositionIsOnBoard(move) {
 
   };
 
@@ -54,10 +57,8 @@ export class PawnGameLogic extends Piece {
 };
 
 const pawn = new PawnGameLogic("black", 2);
-pawn.checkIfSquareIsEmpty();
-console.log(pawn);
-
-
+//pawn.checkIfSquareIsEmpty();
+pawn.calculatePosition([7, 0], [1, 0]);
 
 export class BishopLogic extends Piece {
   constructor(color, number) {

@@ -1,12 +1,7 @@
-import Piece from "./pieceLogic.js";
-import { PawnGameLogic, BishopLogic, KnightLogic, RookLogic, QueenLogic, KingLogic, }  from "./pieceLogic.js";
+//import Piece from "./pieceLogic.js";
+//import { PawnGameLogic, BishopLogic, KnightLogic, RookLogic, QueenLogic, KingLogic, }  from "./pieceLogic.js";
 import DomManipulation from "./dom.js";
 import { PieceSelector } from "./dom.js";
-import { EventService } from "./event.service.js";
-
-eventService.on("pieceMoved", (newPosition) => {
-  console.log("test");
-});
 
 // To run jest with ES6: node --experimental-vm-modules node_modules/jest/bin/jest.js
 
@@ -92,16 +87,16 @@ export class PieceFactory {
     console.log(this.board);
   };
   
-  activatePieces() {
-    for (let i = 1; i < 9; i++) {
-      const pawnWhiteLogic = new PawnGameLogic("white", i);
-      const pawnWhiteDom = new DomManipulation(pawnWhiteLogic);
-      const pawnBlackLogic = new PawnGameLogic("black", i);
-      const pawnBlackDom = new DomManipulation(pawnBlackLogic);
-      this.activePieces.push(pawnWhiteDom);
-      this.activePieces.push(pawnBlackDom);
-    };
-  };
+  // activatePieces() {
+  //   for (let i = 1; i < 9; i++) {
+  //     const pawnWhiteLogic = new PawnGameLogic("white", i);
+  //     const pawnWhiteDom = new DomManipulation(pawnWhiteLogic);
+  //     const pawnBlackLogic = new PawnGameLogic("black", i);
+  //     const pawnBlackDom = new DomManipulation(pawnBlackLogic);
+  //     this.activePieces.push(pawnWhiteDom);
+  //     this.activePieces.push(pawnBlackDom);
+  //   };
+  // };
 
   get board() {
     return this._board;
@@ -113,7 +108,7 @@ export class PieceFactory {
 };
 
 export const factory = new PieceFactory();
-factory.activatePieces();
+//factory.activatePieces();
 factory.addPiecesToBoard();
 
 //const pieceSelector = new PieceSelector(pieces);

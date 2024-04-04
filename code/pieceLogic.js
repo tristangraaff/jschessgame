@@ -1,74 +1,66 @@
 import { factory } from "./main.js";
 
 export default class Piece {
-  constructor(color, number, eventService) {
+  constructor(color, number) {
     this.color = color;
     this.number = number;
     this.hasMoved = false;
+    this.possibleMoves = [];
     this.validMoves = [];
-    this.dependencyInjection = this.eventService = eventService;
   };
 
-  calculatePosition(currentPosition, move) {
-    let currentBoardState = factory._board;
-    const currentPositionOnBoard = factory._board[currentPosition[0]][currentPosition[1]];
-    console.log(currentPositionOnBoard);
-    console.log(move);
-    const newPositionOnBoard = factory._board[currentPosition[0] + move[0]];
-    console.log(factory._board);
+  calculatePosition(currentPosition, moveVector) {
+    const newRow = currentPosition[0] + moveVector[0];
+    const newCol = currentPosition[1] + moveVector[1];
+    const newPosition = [newRow, newCol];
+    console.log("New position:", newPosition);
+    return newPosition;
   };
 
-  checkIfSquareIsEmpty(move) {
-    console.log(factory.board);
-    factory.board = "a";
-    console.log(factory.board);
-    // while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-    //   // Check if the square is empty or contains an opponent's piece
-    //   if (!board[newRow][newCol]) {
-    //     validMoves.push([newRow, newCol]);
-    //   } else {
-    //     // Stop checking in this direction if there's an obstacle
-    //     break;
-    //   }
-    // };  
+  checkIfPositionIsOnBoard(position) {
+    const [row, col] = position;
+    if (row < 0 || row > 7 || col < 0 || col > 7) {
+      return false;
+    } else {
+      return true;
+    };
   };
 
-  checkIfPositionIsOnBoard(move) {
-
+  checkIfSquareIsEmpty(position) {
+    if (factory._board[position[0]][position[1]] === false) {
+      console.log("Square is empty");
+      return true;
+    } else {
+      return false;
+    };
   };
 
-    // // Check if the new position is within the board boundaries
-  // if (newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize) {
-  //   validMoves.push([newRow, newCol]);
-  // } else {
-  //   // Stop checking in this direction if out of bounds
-  //   break;
-  // }
+  getValidMove(currentPosition, moveVector) {
+    const position = this.calculatePosition(currentPosition, moveVector);
+    const positionOnBoard = this.checkIfPositionIsOnBoard(position);
+    const squareIsEmpty = this.checkIfSquareIsEmpty(position);
+    if (positionOnBoard === true && squareIsEmpty === true) {
+      this.validMoves.push(position);
+    };
+  };
 };
 
 export class PawnGameLogic extends Piece {  
   getValidMoves() {
     if (this.hasMoved) {
-      this.validMoves = this.color === "white" ? [1, 0] : [-1, 0];
+      this.possibleMoves = this.color === "white" ? [1, 0] : [-1, 0];
     } else if (!this.hasMoved) {
-      this.validMoves = this.color === "white" ? [[1, 0], [2, 0]] : [[-1, 0], [-2, 0]];
+      this.possibleMoves = this.color === "white" ? [[1, 0], [2, 0]] : [[-1, 0], [-2, 0]];
     };
   };
 };
 
 const pawn = new PawnGameLogic("black", 2);
-//pawn.checkIfSquareIsEmpty();
-pawn.calculatePosition([7, 0], [1, 0]);
+pawn.checkIfSquareIsEmpty([0,95]);
 
 export class BishopLogic extends Piece {
-  constructor(color, number) {
-    this.color = color;
-    this.number = number;
-    this.hasMoved = false;
-    this.validMoves = [];
-  };
 
-  getValidMoves() {
+  getPossibleMoves() {
     const boardSize = 8;
     const directions =[
       [-1, -1],
@@ -81,21 +73,14 @@ export class BishopLogic extends Piece {
       for (let i = 1; i < boardSize; i++) {
         const newRow = i * x;
         const newCol = i * y;
-        this.validMoves.push([newRow, newCol]);
+        this.possibleMoves.push([newRow, newCol]);
       };
     };      
   };
 };
   
 export class RookLogic extends Piece {
-  constructor(color, number) {
-    this.color = color;
-    this.number = number;
-    this.hasMoved = false;
-    this.validMoves = [];
-  };
-
-  getValidMoves() {
+  getPossibleMoves() {
     const boardSize = 8;
     const directions =[
       [0, -1],
@@ -108,21 +93,14 @@ export class RookLogic extends Piece {
       for (let i = 1; i < boardSize; i++) {
         const newRow = i * x;
         const newCol = i * y;
-        this.validMoves.push([newRow, newCol]);
+        this.possibleMoves.push([newRow, newCol]);
       };
     }; 
   };
 };
 
 export class QueenLogic extends Piece {
-  constructor(color, number) {
-    this.color = color;
-    this.number = number;
-    this.hasMoved = false;
-    this.validMoves = [];
-  };
-
-  getValidMoves() {
+  getPossibleMoves() {
     const boardSize = 8;
     const directions =[
       [0, -1],
@@ -139,7 +117,7 @@ export class QueenLogic extends Piece {
       for (let i = 1; i < boardSize; i++) {
         const newRow = i * x;
         const newCol = i * y;
-        this.validMoves.push([newRow, newCol]);
+        this.possibleMoves.push([newRow, newCol]);
       };
     }; 
   };
@@ -147,10 +125,8 @@ export class QueenLogic extends Piece {
 
 export class KingLogic extends Piece {
   constructor(color, number) {
-    this.color = color;
-    this.number = number;
-    this.hasMoved = false;
-    this.validMoves = [
+    super(color, number)
+    this.possibleMoves = [
       [0, -1],
       [0, 1],
       [-1, 0],
@@ -160,9 +136,13 @@ export class KingLogic extends Piece {
       [1, -1],
       [1, 1]
     ];
-  };
   // Rokeren toevoegen
+  };
 };
+
+const king = new KingLogic("black");
+console.log(king);
+
 
 export class KnightLogic extends Piece {
   constructor(color, number) {

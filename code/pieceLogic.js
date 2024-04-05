@@ -1,4 +1,9 @@
 import { factory } from "./main.js";
+  //Check if Piece is in the way for pawn and rokeren!
+  // Write capture logic
+  // Add rokeren
+  // Add en passant
+  // Add pawn reaches end of board
 
 export default class Piece {
   constructor(color, number) {
@@ -35,18 +40,42 @@ export default class Piece {
     };
   };
 
+  checkIfPieceIsInTheWay(position, moveVector) {
+
+  };
+
   getValidMove(currentPosition, moveVector) {
     const position = this.calculatePosition(currentPosition, moveVector);
     const positionOnBoard = this.checkIfPositionIsOnBoard(position);
-    const squareIsEmpty = this.checkIfSquareIsEmpty(position);
+    const squareIsEmpty = this.checkIfSquareIsEmpty(position); //This does not make it invalid, it means capturing if opposite color
     if (positionOnBoard === true && squareIsEmpty === true) {
       this.validMoves.push(position);
+      console.log("Valid moves: " + this.validMoves);
+    } else {
+      console.log("Move was not valid. positionOnBoard = " + positionOnBoard + " and squareIsEmpty = " + squareIsEmpty);
     };
+  };
+
+  movePiece(currentPosition, validMove, pieceName) {
+    let boardState = factory._board;
+    boardState[currentPosition[0]][currentPosition[1]] = false;
+    const validPosition = this.calculatePosition(currentPosition, validMove);
+    boardState[validPosition[0]][validPosition[1]] = pieceName;
+  };
+
+  capturePiece() {
+    //pawn
+
+    //rest
+    //get all possible moves
+    //check for each move
+      //check if square is empty
+    //check if piece is opposite color 
   };
 };
 
 export class PawnGameLogic extends Piece {  
-  getValidMoves() {
+  getPossibleMoves() {
     if (this.hasMoved) {
       this.possibleMoves = this.color === "white" ? [1, 0] : [-1, 0];
     } else if (!this.hasMoved) {
@@ -56,10 +85,10 @@ export class PawnGameLogic extends Piece {
 };
 
 const pawn = new PawnGameLogic("black", 2);
-pawn.checkIfSquareIsEmpty([0,95]);
+//pawn.getValidMove([1, 4], [1, 1]);
+pawn.movePiece([1, 4], [1, 1], "pawnBlack");
 
 export class BishopLogic extends Piece {
-
   getPossibleMoves() {
     const boardSize = 8;
     const directions =[
@@ -140,16 +169,12 @@ export class KingLogic extends Piece {
   };
 };
 
-const king = new KingLogic("black");
-console.log(king);
-
-
 export class KnightLogic extends Piece {
   constructor(color, number) {
     this.color = color;
     this.number = number;
     this.hasMoved = false;
-    this.validMoves = [
+    this.possibleMovesMoves = [
       [-1, -2],
       [-1, 2],
       [-2, -1],

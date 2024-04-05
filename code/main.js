@@ -11,12 +11,7 @@ import { PieceSelector } from "./dom.js";
 // Add turn logic / win condition
 // add movement
 // add logic per piece: special rules (rokeren, en passant)
-// write Piece class
 // add capturing pieces 
-
-const log = (input) => {
-  console.log(input);
-};
 
 export default class GameState {
   static turnCount = 1;
@@ -108,7 +103,6 @@ export class PieceFactory {
 };
 
 export const factory = new PieceFactory();
-//factory.activatePieces();
 factory.addPiecesToBoard();
 
 //const pieceSelector = new PieceSelector(pieces);

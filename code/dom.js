@@ -89,8 +89,39 @@ export class PieceSelector {
 
 class BoardDOMConnection {
   constructor(){
-    console.log(factory.board);
+  };
+
+  addPiecesToDom() {
+    const chessBoard = document.getElementById("chess_board");
+    for (let row = 0; row < factory.board.length; row++) {
+      console.log(row)
+      const rowDOM = document.createElement("div");
+      rowDOM.classList.add("row");
+      chessBoard.appendChild(rowDOM);
+      for (let col = 0; col < row.length; col++) {
+        const square = document.createElement('div');
+        console.log(row[i]);
+        square.classList.add("square", `square_${col + 1}`, (col + 1) % 2 === 0 ? "white" : "black");
+        //square.classList.add('square', (row + col) % 2 === 0 ? 'white' : 'black');
+        //square.dataset.position = `${String.fromCharCode(65 + col)}${8 - row}`;
+        rowDOM.appendChild(square);             
+      }; 
+      
+    }
+    factory.board.forEach((row) => {
+
+    });
+
+    // for (let row = 0; row < 8; row++) {
+    //   for (let col = 0; col < 8; col++) {
+    //       const square = document.createElement('div');
+    //       square.classList.add('square', (row + col) % 2 === 0 ? 'white' : 'black');
+    //       square.dataset.position = `${String.fromCharCode(65 + col)}${8 - row}`;
+    //       chessboard.appendChild(square);
+    //   };
+    // };
   };
 };
 
 const initiializeDOM = new BoardDOMConnection();
+initiializeDOM.addPiecesToDom();

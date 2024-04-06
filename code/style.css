@@ -14,7 +14,7 @@
   width: 100%;
   background-color: #fff;
 }
-#board {
+#chess_board {
   border: 10px solid #424242;
   width: 500px;
   height: 500px;
@@ -25,7 +25,7 @@
   grid-template-columns: repeat(8, 1fr);
 }
 
-.box {
+.square {
   width: 60px;
   height: 60px;
   display: flex;
@@ -34,19 +34,26 @@
   cursor: pointer;
 }
 
-.box_1:nth-of-type(odd),
-.box_3:nth-of-type(odd),
-.box_5:nth-of-type(odd),
-.box_7:nth-of-type(odd) {
+/* .square_1:nth-of-type(odd),
+.square_3:nth-of-type(odd),
+.square_5:nth-of-type(odd),
+.square_7:nth-of-type(odd) {
   background-color: #9c9c9c;
 }
-.box_2:nth-of-type(even),
-.box_4:nth-of-type(even),
-.box_6:nth-of-type(even),
-.box_8:nth-of-type(even) {
+.square_2:nth-of-type(even),
+.square_4:nth-of-type(even),
+.square_6:nth-of-type(even),
+.square_8:nth-of-type(even) {
   background-color: #9c9c9c;
+} */
+
+.black {
+  background-color: black;
 }
 
+.white {
+  background-color: beige;
+}
 img {
   width: 40px;
   height: 40px;

@@ -6,9 +6,8 @@ import { factory } from "./main.js";
   // Add pawn reaches end of board
 
 export default class Piece {
-  constructor(color, number) {
+  constructor(color) {
     this.color = color;
-    this.number = number;
     this.hasMoved = false;
     this.possibleMoves = [];
     this.validMoves = [];
@@ -47,7 +46,7 @@ export default class Piece {
   getValidMove(currentPosition, moveVector) {
     const position = this.calculatePosition(currentPosition, moveVector);
     const positionOnBoard = this.checkIfPositionIsOnBoard(position);
-    const squareIsEmpty = this.checkIfSquareIsEmpty(position); //This does not make it invalid, it means capturing if opposite color
+    //const squareIsEmpty = this.checkIfSquareIsEmpty(position); //This does not make it invalid, it means capturing if opposite color
     if (positionOnBoard === true && squareIsEmpty === true) {
       this.validMoves.push(position);
       console.log("Valid moves: " + this.validMoves);
@@ -63,18 +62,24 @@ export default class Piece {
     boardState[validPosition[0]][validPosition[1]] = pieceName;
   };
 
-  capturePiece() {
-    //pawn
-
+  checkIfPieceCanBeCaptured(ownPosition, otherPosition) {
     //rest
     //get all possible moves
     //check for each move
       //check if square is empty
-    //check if piece is opposite color 
+    //check if piece is opposite color
+
+    if (this.constructor.name != "Pawn") {
+
+    };
+    
+    if (this.constructor.name == "Pawn") {
+
+    };
   };
 };
 
-export class PawnGameLogic extends Piece {  
+export class Pawn extends Piece {  
   getPossibleMoves() {
     if (this.hasMoved) {
       this.possibleMoves = this.color === "white" ? [1, 0] : [-1, 0];
@@ -84,11 +89,27 @@ export class PawnGameLogic extends Piece {
   };
 };
 
-const pawn = new PawnGameLogic("black", 2);
+const pawn = new Pawn("black");
 //pawn.getValidMove([1, 4], [1, 1]);
 pawn.movePiece([1, 4], [1, 1], "pawnBlack");
 
-export class BishopLogic extends Piece {
+export class Knight extends Piece {
+  constructor(color) {
+    super(color);
+    this.possibleMovesMoves = [
+      [-1, -2],
+      [-1, 2],
+      [-2, -1],
+      [-2, 1],
+      [1, -2],
+      [1, 2],
+      [2, -1],
+      [2, 1]
+    ]; 
+  };
+};
+
+export class Bishop extends Piece {
   getPossibleMoves() {
     const boardSize = 8;
     const directions =[
@@ -108,7 +129,7 @@ export class BishopLogic extends Piece {
   };
 };
   
-export class RookLogic extends Piece {
+export class Rook extends Piece {
   getPossibleMoves() {
     const boardSize = 8;
     const directions =[
@@ -128,7 +149,7 @@ export class RookLogic extends Piece {
   };
 };
 
-export class QueenLogic extends Piece {
+export class Queen extends Piece {
   getPossibleMoves() {
     const boardSize = 8;
     const directions =[
@@ -152,9 +173,9 @@ export class QueenLogic extends Piece {
   };
 };
 
-export class KingLogic extends Piece {
-  constructor(color, number) {
-    super(color, number)
+export class King extends Piece {
+  constructor(color) {
+    super(color)
     this.possibleMoves = [
       [0, -1],
       [0, 1],
@@ -169,20 +190,30 @@ export class KingLogic extends Piece {
   };
 };
 
-export class KnightLogic extends Piece {
-  constructor(color, number) {
-    this.color = color;
-    this.number = number;
-    this.hasMoved = false;
-    this.possibleMovesMoves = [
-      [-1, -2],
-      [-1, 2],
-      [-2, -1],
-      [-2, 1],
-      [1, -2],
-      [1, 2],
-      [2, -1],
-      [2, 1]
-    ]; 
-  };
+for (let i = 0; i < 8; i++) {
+  factory.addPiece(new Pawn("black"), 1, i);
+  factory.addPiece(new Pawn("white"), 6, i);
 };
+
+factory.addPiece(new Rook("black"), 0, 0);
+factory.addPiece(new Rook("black"), 0, 7);
+factory.addPiece(new Rook("white"), 7, 0);
+factory.addPiece(new Rook("white"), 7, 7);
+
+factory.addPiece(new Knight("black"), 0, 1);
+factory.addPiece(new Knight("black"), 0, 6);
+factory.addPiece(new Knight("white"), 7, 1);
+factory.addPiece(new Knight("white"), 7, 6);
+
+factory.addPiece(new Bishop("black"), 0, 2);
+factory.addPiece(new Bishop("black"), 0, 5);
+factory.addPiece(new Bishop("white"), 7, 2);
+factory.addPiece(new Bishop("white"), 7, 5);
+
+factory.addPiece(new Queen("black"), 0, 3);
+factory.addPiece(new Queen("white"), 7, 3);
+
+factory.addPiece(new King("black"), 0, 4);
+factory.addPiece(new King("white"), 7, 4);
+
+console.log(factory.board);

@@ -17,7 +17,7 @@ export default class Piece {
     const newRow = currentPosition[0] + moveVector[0];
     const newCol = currentPosition[1] + moveVector[1];
     const newPosition = [newRow, newCol];
-    console.log("New position:", newPosition);
+    //console.log("New position:", newPosition);
     return newPosition;
   };
 
@@ -31,12 +31,7 @@ export default class Piece {
   };
 
   checkIfSquareIsEmpty(position) {
-    if (factory._board[position[0]][position[1]] === false) {
-      console.log("Square is empty");
-      return true;
-    } else {
-      return false;
-    };
+    return factory._board[position[0]][position[1]] === false ? true : false;
   };
 
   checkIfPieceIsInTheWay(position, moveVector) {
@@ -45,12 +40,11 @@ export default class Piece {
 
   getValidMoves(currentPosition, possibleMoves) {
     for (let i = 0; i< this.possibleMoves.length; i++) {
-      const position = this.calculatePosition(currentPosition, possibleMoves[i]);
-      const positionOnBoard = this.checkIfPositionIsOnBoard(position);
-      const squareIsEmpty = this.checkIfSquareIsEmpty(position); //This does not make it invalid, it means capturing if opposite color
+      const possiblePosition = this.calculatePosition(currentPosition, possibleMoves[i]);
+      const positionOnBoard = this.checkIfPositionIsOnBoard(possiblePosition);
+      const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
       if (positionOnBoard === true && squareIsEmpty === true) {
-        this.validMoves.push(position);
-        console.log("Valid moves: " + this.validMoves);
+        this.validMoves.push(possiblePosition);
       } else {
         console.log("Move was not valid. positionOnBoard = " + positionOnBoard + " and squareIsEmpty = " + squareIsEmpty);
       }; 
@@ -89,9 +83,9 @@ export class Pawn extends Piece {
   
   getPossibleMoves() {
     if (this.hasMoved) {
-      this.possibleMoves = this.color === "white" ? [1, 0] : [-1, 0];
+      this.possibleMoves = this.color === "white" ? [-1, 0] : [1, 0];
     } else if (!this.hasMoved) {
-      this.possibleMoves = this.color === "white" ? [[1, 0], [2, 0]] : [[-1, 0], [-2, 0]];
+      this.possibleMoves = this.color === "white" ? [[-1, 0], [-2, 0]] : [[1, 0], [2, 0]];
     };
   };
 };

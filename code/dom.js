@@ -150,7 +150,6 @@ class PieceSelect {
 
   handleSquareClick(event) {
     const clickedSquare = event.target.closest(".square");
-    console.log(clickedSquare);
     if (!clickedSquare) return;
     if (clickedSquare.hasAttribute("data-piece") && this.pieceIsSelected === false) {
       //this.pieceIsSelected = true;
@@ -159,16 +158,36 @@ class PieceSelect {
       const colIndexClassName = clickedSquare.classList[1];
       const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));     
       const piece = factory.board[rowIndex][colIndex];
-      this.getValidMovesInDom(piece, rowIndex, colIndex);
+      const validMoves = this.getValidMovesFromPieceLogic(piece, rowIndex, colIndex);
+      this.createColorContainer(validMoves);
     };
   };
 
-  getValidMovesInDom(piece, rowIndex, colIndex) {
+  getValidMovesFromPieceLogic(piece, rowIndex, colIndex) {
     const possibleMoves = piece.possibleMoves;
-    console.log(possibleMoves);
     const currentPosition = [rowIndex, colIndex];
-    console.log(currentPosition);
     piece.getValidMoves(currentPosition, possibleMoves);
+    return piece.validMoves
+  };
+
+  createColorContainer(squares) {
+    squares.forEach((square) => {
+      console.log(square);
+      const domRow = document.querySelector(`.row_index_${square[0]}`);
+      const domCol = domRow.children[square[1]];
+      console.log(domCol); 
+      const container = document.createElement("div");
+      container.classList.add("colorContainer");
+      domCol.appendChild(container);
+    });
+
+    const colorContainers = document.querySelectorAll(".colorContainer");
+    colorContainers.forEach((container) => {
+      container.style.backgroundColor = "rgba(0, 0, 255, 0.5)";
+      container.style.opacity = "0.7";
+      container.style.width = "60px";
+      container.style.height = "60px";
+    });
   };
 
 };

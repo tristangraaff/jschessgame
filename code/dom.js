@@ -89,6 +89,8 @@ export class PieceSelector {
 
 class BoardDOMConnection {
   constructor(){
+    this.addBoardToDom();
+    this.addPiecesToDom();
   };
 
   createSquare(row, col) {
@@ -115,8 +117,28 @@ class BoardDOMConnection {
       }; 
     };
   };
+
+  addPiecesToDom() {
+    const chessBoard = document.getElementById("chess_board");
+    const rows = chessBoard.children;
+
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+      const row = rows[rowIndex];
+      const colLength = rows[rowIndex].children.length;
+      
+      for (let colIndex = 0; colIndex < colLength; colIndex++) {
+        const square = row.children[colIndex];
+        const piece = factory.board[rowIndex][colIndex];
+        
+        if (typeof piece === "object") {
+          square.setAttribute("data-piece", JSON.stringify(piece));
+          const imgElement = document.createElement("img");
+          imgElement.src = `../img/${piece.color}${piece.constructor.name}.png`;
+          square.appendChild(imgElement);
+        };
+      };
+    };
+  };
 };
 
 const initiializeDOM = new BoardDOMConnection();
-initiializeDOM.addBoardToDom();
-initiializeDOM.createSquare(0, 0);

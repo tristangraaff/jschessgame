@@ -99,7 +99,7 @@ class BoardDOMConnection {
     const isEvenRow = row % 2 === 0;
     const colorClass = isEvenCol === isEvenRow ? "black" : "white";
 
-    square.classList.add("square", `square_${col + 1}`, colorClass);
+    square.classList.add("square", `square_index_${col}`, colorClass);
     square.dataset.position = `${String.fromCharCode(65 + col)}${8 - row}`;
     return square;
   };
@@ -108,7 +108,7 @@ class BoardDOMConnection {
     const chessBoard = document.getElementById("chess_board");
     for (let row = 0; row < factory.board.length; row++) {
       const rowDOM = document.createElement("div");
-      rowDOM.classList.add("row");
+      rowDOM.classList.add("row", `row_index_${row}`);
       chessBoard.appendChild(rowDOM);
 
       for (let col = 0; col < factory.board[row].length; col++) {
@@ -141,4 +141,37 @@ class BoardDOMConnection {
   };
 };
 
+class PieceSelect {
+  constructor() {
+    this.chessBoard = document.getElementById("chess_board");
+    this.chessBoard.addEventListener("click", this.handleSquareClick.bind(this));
+    this.pieceIsSelected = false;
+  };
+
+  handleSquareClick(event) {
+    const clickedSquare = event.target.closest(".square");
+    console.log(clickedSquare);
+    if (!clickedSquare) return;
+    if (clickedSquare.hasAttribute("data-piece") && this.pieceIsSelected === false) {
+      //this.pieceIsSelected = true;
+      const rowIndexClassName = clickedSquare.parentElement.classList[1];
+      const rowIndex = Number(rowIndexClassName.charAt(rowIndexClassName.length -1));
+      const colIndexClassName = clickedSquare.classList[1];
+      const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));     
+      const piece = factory.board[rowIndex][colIndex];
+      this.getValidMovesInDom(piece, rowIndex, colIndex);
+    };
+  };
+
+  getValidMovesInDom(piece, rowIndex, colIndex) {
+    const possibleMoves = piece.possibleMoves;
+    console.log(possibleMoves);
+    const currentPosition = [rowIndex, colIndex];
+    console.log(currentPosition);
+    piece.getValidMoves(currentPosition, possibleMoves);
+  };
+
+};
+
 const initiializeDOM = new BoardDOMConnection();
+const pieceSelector = new PieceSelect();

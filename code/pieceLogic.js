@@ -43,15 +43,17 @@ export default class Piece {
 
   };
 
-  getValidMove(currentPosition, moveVector) {
-    const position = this.calculatePosition(currentPosition, moveVector);
-    const positionOnBoard = this.checkIfPositionIsOnBoard(position);
-    //const squareIsEmpty = this.checkIfSquareIsEmpty(position); //This does not make it invalid, it means capturing if opposite color
-    if (positionOnBoard === true && squareIsEmpty === true) {
-      this.validMoves.push(position);
-      console.log("Valid moves: " + this.validMoves);
-    } else {
-      console.log("Move was not valid. positionOnBoard = " + positionOnBoard + " and squareIsEmpty = " + squareIsEmpty);
+  getValidMoves(currentPosition, possibleMoves) {
+    for (let i = 0; i< this.possibleMoves.length; i++) {
+      const position = this.calculatePosition(currentPosition, possibleMoves[i]);
+      const positionOnBoard = this.checkIfPositionIsOnBoard(position);
+      const squareIsEmpty = this.checkIfSquareIsEmpty(position); //This does not make it invalid, it means capturing if opposite color
+      if (positionOnBoard === true && squareIsEmpty === true) {
+        this.validMoves.push(position);
+        console.log("Valid moves: " + this.validMoves);
+      } else {
+        console.log("Move was not valid. positionOnBoard = " + positionOnBoard + " and squareIsEmpty = " + squareIsEmpty);
+      }; 
     };
   };
 
@@ -79,7 +81,12 @@ export default class Piece {
   };
 };
 
-export class Pawn extends Piece {  
+export class Pawn extends Piece {
+  constructor(color) {
+    super(color);
+    this.getPossibleMoves();
+  };
+  
   getPossibleMoves() {
     if (this.hasMoved) {
       this.possibleMoves = this.color === "white" ? [1, 0] : [-1, 0];
@@ -110,6 +117,11 @@ export class Knight extends Piece {
 };
 
 export class Bishop extends Piece {
+  constructor(color) {
+    super(color);
+    this.getPossibleMoves();
+  };
+
   getPossibleMoves() {
     const boardSize = 8;
     const directions =[
@@ -130,6 +142,11 @@ export class Bishop extends Piece {
 };
   
 export class Rook extends Piece {
+  constructor(color) {
+    super(color);
+    this.getPossibleMoves();
+  };
+
   getPossibleMoves() {
     const boardSize = 8;
     const directions =[
@@ -150,6 +167,11 @@ export class Rook extends Piece {
 };
 
 export class Queen extends Piece {
+  constructor(color) {
+    super(color);
+    this.getPossibleMoves();
+  };
+
   getPossibleMoves() {
     const boardSize = 8;
     const directions =[

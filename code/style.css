@@ -34,19 +34,6 @@
   cursor: pointer;
 }
 
-/* .square_1:nth-of-type(odd),
-.square_3:nth-of-type(odd),
-.square_5:nth-of-type(odd),
-.square_7:nth-of-type(odd) {
-  background-color: #9c9c9c;
-}
-.square_2:nth-of-type(even),
-.square_4:nth-of-type(even),
-.square_6:nth-of-type(even),
-.square_8:nth-of-type(even) {
-  background-color: #9c9c9c;
-} */
-
 .black {
   background-color: rgb(110, 110, 110);
 }
@@ -57,4 +44,11 @@
 img {
   width: 40px;
   height: 40px;
+}
+
+.color_container {
+  background-color: rgba(0, 0, 255, 0.5);
+  opacity: 0.7;
+  width: 60px;
+  height: 60px;
 }

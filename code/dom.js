@@ -146,20 +146,28 @@ class PieceSelect {
     this.chessBoard = document.getElementById("chess_board");
     this.chessBoard.addEventListener("click", this.handleSquareClick.bind(this));
     this.pieceIsSelected = false;
+    this.selectedPiece;
   };
 
   handleSquareClick(event) {
     const clickedSquare = event.target.closest(".square");
     if (!clickedSquare) return;
-    if (clickedSquare.hasAttribute("data-piece") && this.pieceIsSelected === false) {
-      //this.pieceIsSelected = true;
-      const rowIndexClassName = clickedSquare.parentElement.classList[1];
-      const rowIndex = Number(rowIndexClassName.charAt(rowIndexClassName.length -1));
-      const colIndexClassName = clickedSquare.classList[1];
-      const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));     
-      const piece = factory.board[rowIndex][colIndex];
-      const validMoves = this.getValidMovesFromPieceLogic(piece, rowIndex, colIndex);
-      this.createColorContainer(validMoves);
+
+    if (clickedSquare.hasAttribute("data-piece") && !this.pieceIsSelected) {
+      this.pieceIsSelected = true;
+      this.highlightValidMoves(clickedSquare);
+    } 
+    
+    else if (this.pieceIsSelected) {
+      if (clickedSquare === this.selectedPiece) {
+        this.pieceIsSelected = false;
+        this.removeColorContainer();
+      };
+      if (clickedSquare !== this.selectedPiece && clickedSquare.hasAttribute("data-piece")) {
+        this.pieceIsSelected = true;
+        this.removeColorContainer();
+        this.highlightValidMoves(clickedSquare);
+      };
     };
   };
 
@@ -170,26 +178,33 @@ class PieceSelect {
     return piece.validMoves
   };
 
+  highlightValidMoves(clickedSquare) {
+    this.selectedPiece = clickedSquare;
+    const rowIndexClassName = clickedSquare.parentElement.classList[1];
+    const rowIndex = Number(rowIndexClassName.charAt(rowIndexClassName.length -1));
+    const colIndexClassName = clickedSquare.classList[1];
+    const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));     
+    const piece = factory.board[rowIndex][colIndex];
+    const validMoves = this.getValidMovesFromPieceLogic(piece, rowIndex, colIndex);
+    this.createColorContainer(validMoves);
+  };
+
   createColorContainer(squares) {
     squares.forEach((square) => {
-      console.log(square);
       const domRow = document.querySelector(`.row_index_${square[0]}`);
-      const domCol = domRow.children[square[1]];
-      console.log(domCol); 
+      const domCol = domRow.children[square[1]]; 
       const container = document.createElement("div");
-      container.classList.add("colorContainer");
+      container.classList.add("color_container");
       domCol.appendChild(container);
-    });
-
-    const colorContainers = document.querySelectorAll(".colorContainer");
-    colorContainers.forEach((container) => {
-      container.style.backgroundColor = "rgba(0, 0, 255, 0.5)";
-      container.style.opacity = "0.7";
-      container.style.width = "60px";
-      container.style.height = "60px";
     });
   };
 
+  removeColorContainer() {
+    const colorContainers = document.querySelectorAll(".color_container");
+    colorContainers.forEach((container) => {
+      container.remove();
+    });
+  };
 };
 
 const initiializeDOM = new BoardDOMConnection();

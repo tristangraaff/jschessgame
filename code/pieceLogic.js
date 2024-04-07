@@ -17,7 +17,6 @@ export default class Piece {
     const newRow = currentPosition[0] + moveVector[0];
     const newCol = currentPosition[1] + moveVector[1];
     const newPosition = [newRow, newCol];
-    //console.log("New position:", newPosition);
     return newPosition;
   };
 
@@ -31,7 +30,7 @@ export default class Piece {
   };
 
   checkIfSquareIsEmpty(position) {
-    return factory._board[position[0]][position[1]] === false ? true : false;
+    return factory.board[position[0]][position[1]] === false ? true : false;
   };
 
   checkIfPieceIsInTheWay(position, moveVector) {
@@ -39,14 +38,18 @@ export default class Piece {
   };
 
   getValidMoves(currentPosition, possibleMoves) {
+    console.log(currentPosition);
+    console.log(possibleMoves);
     for (let i = 0; i< this.possibleMoves.length; i++) {
       const possiblePosition = this.calculatePosition(currentPosition, possibleMoves[i]);
       const positionOnBoard = this.checkIfPositionIsOnBoard(possiblePosition);
-      const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
-      if (positionOnBoard === true && squareIsEmpty === true) {
-        this.validMoves.push(possiblePosition);
+      if (positionOnBoard) {
+        const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
+        if (positionOnBoard === true && squareIsEmpty === true) {
+          this.validMoves.push(possiblePosition);
+        };
       } else {
-        console.log("Move was not valid. positionOnBoard = " + positionOnBoard + " and squareIsEmpty = " + squareIsEmpty);
+        //console.log("Move was not valid. positionOnBoard = " + positionOnBoard + " and squareIsEmpty = " + squareIsEmpty);
       }; 
     };
   };
@@ -97,7 +100,7 @@ pawn.movePiece([1, 4], [1, 1], "pawnBlack");
 export class Knight extends Piece {
   constructor(color) {
     super(color);
-    this.possibleMovesMoves = [
+    this.possibleMoves = [
       [-1, -2],
       [-1, 2],
       [-2, -1],

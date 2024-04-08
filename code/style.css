@@ -46,8 +46,15 @@ img {
   height: 40px;
 }
 
-.color_container {
+.color_container_valid_moves {
   background-color: rgba(0, 0, 255, 0.5);
+  opacity: 0.7;
+  width: 60px;
+  height: 60px;
+}
+
+.color_container_selected_piece {
+  background-color: rgba(226, 0, 0, 0.5);
   opacity: 0.7;
   width: 60px;
   height: 60px;

@@ -34,7 +34,20 @@ export default class Piece {
   };
 
   checkIfPieceIsInTheWay(position, moveVector) {
+    const [startRow, startCol] = position;
+    const [desiredRow, desiredCol] = moveVector;
+    console.log(position);
+    console.log(moveVector);
+    const rowIncrement = desiredRow > 0 ? 1 : -1;
+    const colIncrement = desiredCol > 0 ? 1 : -1;
 
+    for (let row = startRow + rowIncrement, col = startCol + colIncrement; row !== desiredRow; row += rowIncrement, col += colIncrement) {
+      if (typeof factory.board[row][col] === "object") {
+        return true;
+      } else if (typeof factory.board[row][col] === "boolean") {
+        return false;
+      };
+    };
   };
 
   getValidMoves(currentPosition, possibleMoves) {
@@ -44,8 +57,9 @@ export default class Piece {
       const possiblePosition = this.calculatePosition(currentPosition, possibleMoves[i]);
       const positionOnBoard = this.checkIfPositionIsOnBoard(possiblePosition);
       if (positionOnBoard) {
+        const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, possibleMoves[i]);
         const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
-        if (positionOnBoard === true && squareIsEmpty === true) {
+        if (positionOnBoard && squareIsEmpty && !pieceInTheWay) {
           this.validMoves.push(possiblePosition);
         };
       } else {
@@ -110,6 +124,10 @@ export class Knight extends Piece {
       [2, -1],
       [2, 1]
     ]; 
+  };
+
+  checkIfPieceIsInTheWay() {
+    console.log("This method overwrites the method in the parent class because the rule does not apply to the Knight.")
   };
 };
 

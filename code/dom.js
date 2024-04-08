@@ -155,6 +155,7 @@ class PieceSelect {
 
     if (clickedSquare.hasAttribute("data-piece") && !this.pieceIsSelected) {
       this.pieceIsSelected = true;
+      this.highLightSelectedSquare(clickedSquare);
       this.highlightValidMoves(clickedSquare);
     } 
     
@@ -166,6 +167,7 @@ class PieceSelect {
       if (clickedSquare !== this.selectedPiece && clickedSquare.hasAttribute("data-piece")) {
         this.pieceIsSelected = true;
         this.removeColorContainer();
+        this.highLightSelectedSquare(clickedSquare);
         this.highlightValidMoves(clickedSquare);
       };
     };
@@ -186,21 +188,27 @@ class PieceSelect {
     const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));     
     const piece = factory.board[rowIndex][colIndex];
     const validMoves = this.getValidMovesFromPieceLogic(piece, rowIndex, colIndex);
-    this.createColorContainer(validMoves);
+    this.createColorContainerValidMoves(validMoves);
   };
 
-  createColorContainer(squares) {
+  createColorContainerValidMoves(squares) {
     squares.forEach((square) => {
       const domRow = document.querySelector(`.row_index_${square[0]}`);
       const domCol = domRow.children[square[1]]; 
       const container = document.createElement("div");
-      container.classList.add("color_container");
+      container.classList.add("color_container_valid_moves");
       domCol.appendChild(container);
     });
   };
 
+  highLightSelectedSquare(square) {
+    console.log(square);
+    const container = document.createElement("div");
+    square.classList.add("color_container_selected_piece");
+  };
+
   removeColorContainer() {
-    const colorContainers = document.querySelectorAll(".color_container");
+    const colorContainers = document.querySelectorAll(".color_container_valid_moves");
     colorContainers.forEach((container) => {
       container.remove();
     });

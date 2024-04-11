@@ -36,14 +36,14 @@ export default class Piece {
   checkIfPieceIsInTheWay(position, moveVector) {
     const [startRow, startCol] = position;
     const [desiredRow, desiredCol] = moveVector;
-    console.log("current position: " + position);
-    console.log("Move vector: " + moveVector);
+    //console.log("current position: " + position);
+    //console.log("Move vector: " + moveVector);
 
     const rowIncrement = Math.sign(desiredRow);
     const colIncrement = Math.sign(desiredCol);
 
-    console.log("Row increment: " + rowIncrement);
-    console.log("Col increment: " + colIncrement);
+    //console.log("Row increment: " + rowIncrement);
+    //console.log("Col increment: " + colIncrement);
 
     for (let row = startRow + rowIncrement, col = startCol + colIncrement; row !== desiredRow; row += rowIncrement, col += colIncrement) {
       if (typeof factory.board[row][col] === "object") {
@@ -59,7 +59,7 @@ export default class Piece {
       const possiblePosition = this.calculatePosition(currentPosition, possibleMoves[i]);
       const positionOnBoard = this.checkIfPositionIsOnBoard(possiblePosition);
       if (positionOnBoard) {
-        console.log("Possible position: " + possiblePosition, positionOnBoard);
+        //console.log("Possible position: " + possiblePosition, positionOnBoard);
         const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, possibleMoves[i]);
         const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
         if (positionOnBoard && squareIsEmpty && !pieceInTheWay) {

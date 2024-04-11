@@ -56,7 +56,7 @@ class BoardDOMConnection {
   };
 };
 
-class PieceSelect {
+class PieceSelector {
   constructor() {
     this.chessBoard = document.getElementById("chess_board");
     this.chessBoard.addEventListener("click", this.handleSquareClick.bind(this));
@@ -135,11 +135,21 @@ class PieceSelect {
   };
 };
 
-class PieceMovement {
+class PieceMovement extends PieceSelector{
   constructor() {
+    super();
+  };
+
+  movePiece() {
+    
+  };
+
+  capturePiece() {
 
   };
+
+  //special movements?
 };
 
 const initiializeDOM = new BoardDOMConnection();
-const pieceSelector = new PieceSelect();
+const pieceSelector = new PieceMovement();

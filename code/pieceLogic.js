@@ -36,30 +36,30 @@ export default class Piece {
   checkIfPieceIsInTheWay(position, moveVector) {
     const [startRow, startCol] = position;
     const [desiredRow, desiredCol] = moveVector;
-    console.log(position);
-    console.log(moveVector);
-    const rowIncrement = desiredRow > 0 ? 1 : -1;
-    const colIncrement = desiredCol > 0 ? 1 : -1;
+    console.log("current position: " + position);
+    console.log("Move vector: " + moveVector);
 
-    // for (let row = startRow + rowIncrement, col = startCol + colIncrement; row !== desiredRow; row += rowIncrement, col += colIncrement) {
-    //   console.log(factory.board[row][col]);
-    //   if (typeof factory.board[row][col] === "object") {
-    //     return true;
-    //   } else if (typeof factory.board[row][col] === "boolean") {
-    //     return false;
-    //   };
-    // };
+    const rowIncrement = Math.sign(desiredRow);
+    const colIncrement = Math.sign(desiredCol);
 
-    return false;
+    console.log("Row increment: " + rowIncrement);
+    console.log("Col increment: " + colIncrement);
+
+    for (let row = startRow + rowIncrement, col = startCol + colIncrement; row !== desiredRow; row += rowIncrement, col += colIncrement) {
+      if (typeof factory.board[row][col] === "object") {
+        return true;
+      } else if (typeof factory.board[row][col] === "boolean") {
+        return false;
+      };
+    };
   };
 
   getValidMoves(currentPosition, possibleMoves) {
     for (let i = 0; i< this.possibleMoves.length; i++) {
       const possiblePosition = this.calculatePosition(currentPosition, possibleMoves[i]);
       const positionOnBoard = this.checkIfPositionIsOnBoard(possiblePosition);
-      //console.log(possiblePosition, positionOnBoard);
       if (positionOnBoard) {
-        console.log(possiblePosition, positionOnBoard);
+        console.log("Possible position: " + possiblePosition, positionOnBoard);
         const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, possibleMoves[i]);
         const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
         if (positionOnBoard && squareIsEmpty && !pieceInTheWay) {
@@ -251,7 +251,5 @@ factory.addPiece(new Queen("white"), 7, 3);
 
 factory.addPiece(new King("black"), 0, 4);
 factory.addPiece(new King("white"), 7, 4);
-
-factory.addPiece(new Rook("white"), 4, 0);
 
 console.log(factory.board);

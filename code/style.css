@@ -53,7 +53,7 @@ img {
   height: 60px;
 }
 
-.color_container_selected_piece {
+.highlight_selected_piece {
   background-color: rgba(226, 0, 0, 0.5);
   opacity: 0.7;
   width: 60px;

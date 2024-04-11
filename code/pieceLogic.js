@@ -41,22 +41,25 @@ export default class Piece {
     const rowIncrement = desiredRow > 0 ? 1 : -1;
     const colIncrement = desiredCol > 0 ? 1 : -1;
 
-    for (let row = startRow + rowIncrement, col = startCol + colIncrement; row !== desiredRow; row += rowIncrement, col += colIncrement) {
-      if (typeof factory.board[row][col] === "object") {
-        return true;
-      } else if (typeof factory.board[row][col] === "boolean") {
-        return false;
-      };
-    };
+    // for (let row = startRow + rowIncrement, col = startCol + colIncrement; row !== desiredRow; row += rowIncrement, col += colIncrement) {
+    //   console.log(factory.board[row][col]);
+    //   if (typeof factory.board[row][col] === "object") {
+    //     return true;
+    //   } else if (typeof factory.board[row][col] === "boolean") {
+    //     return false;
+    //   };
+    // };
+
+    return false;
   };
 
   getValidMoves(currentPosition, possibleMoves) {
-    console.log(currentPosition);
-    console.log(possibleMoves);
     for (let i = 0; i< this.possibleMoves.length; i++) {
       const possiblePosition = this.calculatePosition(currentPosition, possibleMoves[i]);
       const positionOnBoard = this.checkIfPositionIsOnBoard(possiblePosition);
+      //console.log(possiblePosition, positionOnBoard);
       if (positionOnBoard) {
+        console.log(possiblePosition, positionOnBoard);
         const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, possibleMoves[i]);
         const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
         if (positionOnBoard && squareIsEmpty && !pieceInTheWay) {
@@ -106,10 +109,6 @@ export class Pawn extends Piece {
     };
   };
 };
-
-const pawn = new Pawn("black");
-//pawn.getValidMove([1, 4], [1, 1]);
-pawn.movePiece([1, 4], [1, 1], "pawnBlack");
 
 export class Knight extends Piece {
   constructor(color) {
@@ -252,5 +251,7 @@ factory.addPiece(new Queen("white"), 7, 3);
 
 factory.addPiece(new King("black"), 0, 4);
 factory.addPiece(new King("white"), 7, 4);
+
+factory.addPiece(new Rook("white"), 4, 0);
 
 console.log(factory.board);

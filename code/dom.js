@@ -1,12 +1,18 @@
 import { incrementString, decrementString } from "./general-utils.js";
 //import GameState from "./main.js";
 import { factory } from "./main.js";
+import { removeDuplicateArrays } from "./general-utils.js";
 
 class BoardDOMConnection {
   constructor(){
     this.addBoardToDom();
     this.addPiecesToDom();
   };
+
+  // static updateDom() {
+  //   const chessBoard = document.getElementById("chess_board");
+  //   console.log(chessBoard);
+  // };
 
   createSquare(row, col) {
     const square = document.createElement("div");
@@ -21,6 +27,7 @@ class BoardDOMConnection {
 
   addBoardToDom() {
     const chessBoard = document.getElementById("chess_board");
+    chessBoard.innerHTML = "";
     for (let row = 0; row < factory.board.length; row++) {
       const rowDOM = document.createElement("div");
       rowDOM.classList.add("row", `row_index_${row}`);
@@ -54,6 +61,8 @@ class BoardDOMConnection {
       };
     };
   };
+
+
 };
 
 class PieceSelector {
@@ -62,6 +71,7 @@ class PieceSelector {
     this.chessBoard.addEventListener("click", this.handleSquareClick.bind(this));
     this.pieceIsSelected = false;
     this.selectedPiece;
+    this.validMoves = [];
   };
 
   handleSquareClick(event) {
@@ -79,6 +89,7 @@ class PieceSelector {
         this.pieceIsSelected = false;
         this.removeColorContainer();
         this.removeSelectedSquareHighlight();
+        this.validMoves = [];
       };
       if (clickedSquare !== this.selectedPiece && clickedSquare.hasAttribute("data-piece")) {
         this.pieceIsSelected = true;
@@ -94,6 +105,8 @@ class PieceSelector {
     const possibleMoves = piece.possibleMoves;
     const currentPosition = [rowIndex, colIndex];
     piece.getValidMoves(currentPosition, possibleMoves);
+    this.validMoves = piece.validMoves;
+    this.validMoves = removeDuplicateArrays(this.validMoves);
     return piece.validMoves
   };
 
@@ -138,10 +151,41 @@ class PieceSelector {
 class PieceMovement extends PieceSelector{
   constructor() {
     super();
+    this.chessBoard.addEventListener("click", this.movePiece.bind(this));
   };
 
-  movePiece() {
-    
+  movePiece(event) {
+
+    const clickedSquare = event.target.closest(".square");
+    console.log(clickedSquare);
+    if (!clickedSquare) return;
+
+    console.log(this.validMoves);
+
+    if (this.pieceIsSelected) {
+      //this.selectedPiece = clickedSquare;
+      const rowIndexClassName = clickedSquare.parentElement.classList[1];
+      const rowIndex = Number(rowIndexClassName.charAt(rowIndexClassName.length -1));
+      const colIndexClassName = clickedSquare.classList[1];
+      const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));   
+      const clickedSquareLocation = [rowIndex, colIndex];
+
+      const squareIsIncludedInValidMoves = this.validMoves.some(a => clickedSquareLocation.every((v, i) => v === a[i]));
+
+      if (squareIsIncludedInValidMoves) {
+        console.log(this.selectedPiece);
+        const rowIndexClassName = this.selectedPiece.parentElement.classList[1];
+        const rowIndex = Number(rowIndexClassName.charAt(rowIndexClassName.length -1));
+        const colIndexClassName = this.selectedPiece.classList[1];
+        const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));   
+        const selectedPieceLocation = [rowIndex, colIndex];
+        console.log(selectedPieceLocation);
+
+        factory._board[rowIndex][colIndex] = false;
+        initiializeDOM.addBoardToDom();
+        initiializeDOM.addPiecesToDom();
+      };
+    };
   };
 
   capturePiece() {

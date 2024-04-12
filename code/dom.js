@@ -112,10 +112,7 @@ class PieceSelector {
 
   highlightValidMoves(clickedSquare) {
     this.selectedPiece = clickedSquare;
-    const rowIndexClassName = clickedSquare.parentElement.classList[1];
-    const rowIndex = Number(rowIndexClassName.charAt(rowIndexClassName.length -1));
-    const colIndexClassName = clickedSquare.classList[1];
-    const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));     
+    const [rowIndex, colIndex] = this.getIndecesFromSquare(clickedSquare); 
     const piece = factory.board[rowIndex][colIndex];
     const validMoves = this.getValidMovesFromPieceLogic(piece, rowIndex, colIndex);
     this.createColorContainerValidMoves(validMoves);
@@ -146,6 +143,14 @@ class PieceSelector {
     const selectedPiece = document.querySelector(".highlight_selected_piece");
     selectedPiece.classList.remove("highlight_selected_piece");
   };
+
+  getIndecesFromSquare(square) {
+    const rowIndexClassName = square.parentElement.classList[1];
+    const rowIndex = Number(rowIndexClassName.charAt(rowIndexClassName.length -1));
+    const colIndexClassName = square.classList[1];
+    const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));     
+    return [rowIndex, colIndex];
+  };
 };
 
 class PieceMovement extends PieceSelector{
@@ -164,23 +169,13 @@ class PieceMovement extends PieceSelector{
 
     if (this.pieceIsSelected) {
       //this.selectedPiece = clickedSquare;
-      const rowIndexClassName = clickedSquare.parentElement.classList[1];
-      const rowIndex = Number(rowIndexClassName.charAt(rowIndexClassName.length -1));
-      const colIndexClassName = clickedSquare.classList[1];
-      const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));   
-      const clickedSquareLocation = [rowIndex, colIndex];
-
+      const clickedSquareLocation = this.getIndecesFromSquare(clickedSquare); 
       const squareIsIncludedInValidMoves = this.validMoves.some(a => clickedSquareLocation.every((v, i) => v === a[i]));
 
       if (squareIsIncludedInValidMoves) {
         console.log(this.selectedPiece);
-        const rowIndexClassName = this.selectedPiece.parentElement.classList[1];
-        const rowIndex = Number(rowIndexClassName.charAt(rowIndexClassName.length -1));
-        const colIndexClassName = this.selectedPiece.classList[1];
-        const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));   
-        const selectedPieceLocation = [rowIndex, colIndex];
-        console.log(selectedPieceLocation);
-
+        const selectedPieceLocation = this.getIndecesFromSquare(this.selectedPiece); 
+        const [rowIndex, colIndex] = selectedPieceLocation;
         factory._board[rowIndex][colIndex] = false;
         initiializeDOM.addBoardToDom();
         initiializeDOM.addPiecesToDom();

@@ -57,8 +57,6 @@ class BoardDOMConnection {
       };
     };
   };
-
-
 };
 
 class PieceSelector {
@@ -118,10 +116,14 @@ class PieceSelector {
 
   highlightValidMoves(clickedSquare) {
     this.selectedPiece = clickedSquare;
-    const [rowIndex, colIndex] = clickedSquare.dataset.location.split(',').map(Number); 
+    const [rowIndex, colIndex] = this.getDatasetLocation(clickedSquare); 
     const piece = this.boardLogic[rowIndex][colIndex];
     const validMoves = this.getValidMovesFromPieceLogic(piece, rowIndex, colIndex);
     this.createColorContainerValidMoves(validMoves);
+  };
+
+  getDatasetLocation(square) {
+    return square.dataset.location.split(',').map(Number); 
   };
 
   getValidMovesFromPieceLogic(piece, rowIndex, colIndex) {
@@ -151,25 +153,27 @@ class PieceMovement extends PieceSelector{
   };
 
   movePiece(event) {
-
     const clickedSquare = event.target.closest(".square");
     console.log(clickedSquare);
     if (!clickedSquare) return;
 
-    console.log(this.validMoves);
-
     if (this.pieceIsSelected) {
       //this.selectedPiece = clickedSquare;
-      const clickedSquareLocation = clickedSquare.dataset.location.split(',').map(Number);
+      const clickedSquareLocation = this.getDatasetLocation(clickedSquare);
       const squareIsIncludedInValidMoves = this.validMoves.some(a => clickedSquareLocation.every((v, i) => v === a[i]));
+      console.log(squareIsIncludedInValidMoves);
 
       if (squareIsIncludedInValidMoves) {
         console.log(this.selectedPiece);
-        const selectedPieceLocation = this.getIndecesFromSquare(this.selectedPiece); 
-        const [rowIndex, colIndex] = selectedPieceLocation;
-        this.boardLogic[rowIndex][colIndex] = false;
-        initiializeDOM.addBoardToDom();
-        initiializeDOM.addPiecesToDom();
+        const piece = JSON.parse(this.selectedPiece.getAttribute("data-piece"));
+        const pieceImg = this.selectedPiece.children[0];
+        this.selectedPiece.removeAttribute("data-piece");
+        this.selectedPiece.innerHTML = "";
+        clickedSquare.setAttribute("data-piece", JSON.stringify(piece));
+        clickedSquare.appendChild(pieceImg);
+        this.deselectPiece();
+        console.log(this.boardLogic);
+        //Board logic is not getting updated!
       };
     };
   };

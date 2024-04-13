@@ -67,6 +67,7 @@ class BoardDOMConnection {
 
 class PieceSelector {
   constructor() {
+    this.boardLogic = factory._board;
     this.chessBoard = document.getElementById("chess_board");
     this.chessBoard.addEventListener("click", this.handleSquareClick.bind(this));
     this.pieceIsSelected = false;
@@ -78,27 +79,27 @@ class PieceSelector {
     const clickedSquare = event.target.closest(".square");
     if (!clickedSquare) return;
 
-    if (clickedSquare.hasAttribute("data-piece") && !this.pieceIsSelected) {
-      this.pieceIsSelected = true;
-      this.highLightSelectedSquare(clickedSquare);
-      this.highlightValidMoves(clickedSquare);
-    } 
-    
-    else if (this.pieceIsSelected) {
-      if (clickedSquare === this.selectedPiece) {
-        this.pieceIsSelected = false;
-        this.removeColorContainer();
-        this.removeSelectedSquareHighlight();
-        this.validMoves = [];
-      };
-      if (clickedSquare !== this.selectedPiece && clickedSquare.hasAttribute("data-piece")) {
-        this.pieceIsSelected = true;
-        this.removeColorContainer();
-        this.removeSelectedSquareHighlight();
-        this.highLightSelectedSquare(clickedSquare);
-        this.highlightValidMoves(clickedSquare);
-      };
+    if (this.pieceIsSelected && clickedSquare === this.selectedPiece) {
+      this.deselectPiece();
+    } else if (clickedSquare.hasAttribute("data-piece")) {
+        this.selectPiece(clickedSquare);
     };
+  };
+
+  selectPiece(clickedSquare) {
+    this.pieceIsSelected = true;
+    this.removeColorContainer();
+    this.removeSelectedSquareHighlight();
+    this.highLightSelectedSquare(clickedSquare);
+    this.highlightValidMoves(clickedSquare);
+  };
+
+  deselectPiece() {
+    this.pieceIsSelected = false;
+    this.pieceIsSelected = false;
+    this.removeColorContainer();
+    this.removeSelectedSquareHighlight();
+    this.validMoves = [];
   };
 
   getValidMovesFromPieceLogic(piece, rowIndex, colIndex) {
@@ -113,7 +114,7 @@ class PieceSelector {
   highlightValidMoves(clickedSquare) {
     this.selectedPiece = clickedSquare;
     const [rowIndex, colIndex] = this.getIndecesFromSquare(clickedSquare); 
-    const piece = factory.board[rowIndex][colIndex];
+    const piece = this.boardLogic[rowIndex][colIndex];
     const validMoves = this.getValidMovesFromPieceLogic(piece, rowIndex, colIndex);
     this.createColorContainerValidMoves(validMoves);
   };
@@ -141,7 +142,9 @@ class PieceSelector {
 
   removeSelectedSquareHighlight() {
     const selectedPiece = document.querySelector(".highlight_selected_piece");
-    selectedPiece.classList.remove("highlight_selected_piece");
+    if (selectedPiece !== null) {
+      selectedPiece.classList.remove("highlight_selected_piece");
+    };
   };
 
   getIndecesFromSquare(square) {
@@ -176,7 +179,7 @@ class PieceMovement extends PieceSelector{
         console.log(this.selectedPiece);
         const selectedPieceLocation = this.getIndecesFromSquare(this.selectedPiece); 
         const [rowIndex, colIndex] = selectedPieceLocation;
-        factory._board[rowIndex][colIndex] = false;
+        this.boardLogic[rowIndex][colIndex] = false;
         initiializeDOM.addBoardToDom();
         initiializeDOM.addPiecesToDom();
       };

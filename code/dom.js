@@ -9,11 +9,6 @@ class BoardDOMConnection {
     this.addPiecesToDom();
   };
 
-  // static updateDom() {
-  //   const chessBoard = document.getElementById("chess_board");
-  //   console.log(chessBoard);
-  // };
-
   createSquare(row, col) {
     const square = document.createElement("div");
     const isEvenCol = (col + 1) % 2 === 0;
@@ -22,6 +17,7 @@ class BoardDOMConnection {
 
     square.classList.add("square", `square_index_${col}`, colorClass);
     square.dataset.position = `${String.fromCharCode(65 + col)}${8 - row}`;
+    square.setAttribute("data-location", [row, col]);
     return square;
   };
 
@@ -86,14 +82,6 @@ class PieceSelector {
     };
   };
 
-  selectPiece(clickedSquare) {
-    this.pieceIsSelected = true;
-    this.removeColorContainer();
-    this.removeSelectedSquareHighlight();
-    this.highLightSelectedSquare(clickedSquare);
-    this.highlightValidMoves(clickedSquare);
-  };
-
   deselectPiece() {
     this.pieceIsSelected = false;
     this.pieceIsSelected = false;
@@ -102,35 +90,12 @@ class PieceSelector {
     this.validMoves = [];
   };
 
-  getValidMovesFromPieceLogic(piece, rowIndex, colIndex) {
-    const possibleMoves = piece.possibleMoves;
-    const currentPosition = [rowIndex, colIndex];
-    piece.getValidMoves(currentPosition, possibleMoves);
-    this.validMoves = piece.validMoves;
-    this.validMoves = removeDuplicateArrays(this.validMoves);
-    return piece.validMoves
-  };
-
-  highlightValidMoves(clickedSquare) {
-    this.selectedPiece = clickedSquare;
-    const [rowIndex, colIndex] = this.getIndecesFromSquare(clickedSquare); 
-    const piece = this.boardLogic[rowIndex][colIndex];
-    const validMoves = this.getValidMovesFromPieceLogic(piece, rowIndex, colIndex);
-    this.createColorContainerValidMoves(validMoves);
-  };
-
-  createColorContainerValidMoves(squares) {
-    squares.forEach((square) => {
-      const domRow = document.querySelector(`.row_index_${square[0]}`);
-      const domCol = domRow.children[square[1]]; 
-      const container = document.createElement("div");
-      container.classList.add("color_container_valid_moves");
-      domCol.appendChild(container);
-    });
-  };
-
-  highLightSelectedSquare(square) {
-    square.classList.add("highlight_selected_piece");
+  selectPiece(clickedSquare) {
+    this.pieceIsSelected = true;
+    this.removeColorContainer();
+    this.removeSelectedSquareHighlight();
+    this.highLightSelectedSquare(clickedSquare);
+    this.highlightValidMoves(clickedSquare);
   };
 
   removeColorContainer() {
@@ -147,12 +112,35 @@ class PieceSelector {
     };
   };
 
-  getIndecesFromSquare(square) {
-    const rowIndexClassName = square.parentElement.classList[1];
-    const rowIndex = Number(rowIndexClassName.charAt(rowIndexClassName.length -1));
-    const colIndexClassName = square.classList[1];
-    const colIndex = Number(colIndexClassName.charAt(colIndexClassName.length -1));     
-    return [rowIndex, colIndex];
+  highLightSelectedSquare(square) {
+    square.classList.add("highlight_selected_piece");
+  };
+
+  highlightValidMoves(clickedSquare) {
+    this.selectedPiece = clickedSquare;
+    const [rowIndex, colIndex] = clickedSquare.dataset.location.split(',').map(Number); 
+    const piece = this.boardLogic[rowIndex][colIndex];
+    const validMoves = this.getValidMovesFromPieceLogic(piece, rowIndex, colIndex);
+    this.createColorContainerValidMoves(validMoves);
+  };
+
+  getValidMovesFromPieceLogic(piece, rowIndex, colIndex) {
+    const possibleMoves = piece.possibleMoves;
+    const currentPosition = [rowIndex, colIndex];
+    piece.getValidMoves(currentPosition, possibleMoves);
+    this.validMoves = piece.validMoves;
+    this.validMoves = removeDuplicateArrays(this.validMoves);
+    return piece.validMoves
+  };
+
+  createColorContainerValidMoves(squares) {
+    squares.forEach((square) => {
+      const htmlLocation = square.join();
+      const htmlElement = document.querySelector(`[data-location='${htmlLocation}']`);
+      const container = document.createElement("div");
+      container.classList.add("color_container_valid_moves");
+      htmlElement.appendChild(container);
+    });
   };
 };
 
@@ -172,7 +160,7 @@ class PieceMovement extends PieceSelector{
 
     if (this.pieceIsSelected) {
       //this.selectedPiece = clickedSquare;
-      const clickedSquareLocation = this.getIndecesFromSquare(clickedSquare); 
+      const clickedSquareLocation = clickedSquare.dataset.location.split(',').map(Number);
       const squareIsIncludedInValidMoves = this.validMoves.some(a => clickedSquareLocation.every((v, i) => v === a[i]));
 
       if (squareIsIncludedInValidMoves) {

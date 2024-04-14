@@ -2,6 +2,7 @@ import { incrementString, decrementString } from "./general-utils.js";
 //import GameState from "./main.js";
 import { factory } from "./main.js";
 import { removeDuplicateArrays } from "./general-utils.js";
+//import Piece from "./pieceLogic.js";
 
 class BoardDOMConnection {
   constructor(){
@@ -57,6 +58,10 @@ class BoardDOMConnection {
       };
     };
   };
+
+  updateDom() {
+    console.log(this.boardLogic);
+  };
 };
 
 class PieceSelector {
@@ -65,7 +70,7 @@ class PieceSelector {
     this.chessBoard = document.getElementById("chess_board");
     this.chessBoard.addEventListener("click", this.handleSquareClick.bind(this));
     this.pieceIsSelected = false;
-    this.selectedPiece;
+    this.selectedDomPiece;
     this.validMoves = [];
   };
 
@@ -73,7 +78,7 @@ class PieceSelector {
     const clickedSquare = event.target.closest(".square");
     if (!clickedSquare) return;
 
-    if (this.pieceIsSelected && clickedSquare === this.selectedPiece) {
+    if (this.pieceIsSelected && clickedSquare === this.selectedDomPiece) {
       this.deselectPiece();
     } else if (clickedSquare.hasAttribute("data-piece")) {
         this.selectPiece(clickedSquare);
@@ -104,9 +109,9 @@ class PieceSelector {
   };
 
   removeSelectedSquareHighlight() {
-    const selectedPiece = document.querySelector(".highlight_selected_piece");
-    if (selectedPiece !== null) {
-      selectedPiece.classList.remove("highlight_selected_piece");
+    const selectedDomPiece = document.querySelector(".highlight_selected_piece");
+    if (selectedDomPiece !== null) {
+      selectedDomPiece.classList.remove("highlight_selected_piece");
     };
   };
 
@@ -115,7 +120,7 @@ class PieceSelector {
   };
 
   highlightValidMoves(clickedSquare) {
-    this.selectedPiece = clickedSquare;
+    this.selectedDomPiece = clickedSquare;
     const [rowIndex, colIndex] = this.getDatasetLocation(clickedSquare); 
     const piece = this.boardLogic[rowIndex][colIndex];
     const validMoves = this.getValidMovesFromPieceLogic(piece, rowIndex, colIndex);
@@ -154,25 +159,33 @@ class PieceMovement extends PieceSelector{
 
   movePiece(event) {
     const clickedSquare = event.target.closest(".square");
-    console.log(clickedSquare);
     if (!clickedSquare) return;
 
-    if (this.pieceIsSelected) {
-      //this.selectedPiece = clickedSquare;
+    if (this.pieceIsSelected && clickedSquare !== this.selectedDomPiece) {
       const clickedSquareLocation = this.getDatasetLocation(clickedSquare);
       const squareIsIncludedInValidMoves = this.validMoves.some(a => clickedSquareLocation.every((v, i) => v === a[i]));
-      console.log(squareIsIncludedInValidMoves);
 
       if (squareIsIncludedInValidMoves) {
-        console.log(this.selectedPiece);
-        const piece = JSON.parse(this.selectedPiece.getAttribute("data-piece"));
-        const pieceImg = this.selectedPiece.children[0];
-        this.selectedPiece.removeAttribute("data-piece");
-        this.selectedPiece.innerHTML = "";
-        clickedSquare.setAttribute("data-piece", JSON.stringify(piece));
-        clickedSquare.appendChild(pieceImg);
-        this.deselectPiece();
+        const selectedPieceLocation = this.getDatasetLocation(this.selectedDomPiece);
+        const [rowIndexSelectedPiece, colIndexSelectedPiece] = selectedPieceLocation;
+        const selectedPieceOnBoard = this.boardLogic[rowIndexSelectedPiece][colIndexSelectedPiece];
+        selectedPieceOnBoard.movePiece(selectedPieceLocation, clickedSquareLocation);
         console.log(this.boardLogic);
+;
+        // this.boardLogic[rowIndexSelectedPiece][colIndexSelectedPiece] = false;
+        // this.boardLogic[rowIndexClickedSquare][colIndexClickedSquare] = selectedPieceOnBoard;
+        //console.log(this.boardLogic);
+
+
+        //console.log(this.selectedPiece);
+        // const piece = JSON.parse(this.selectedPiece.getAttribute("data-piece"));
+        // const pieceImg = this.selectedPiece.children[0];
+        // this.selectedPiece.removeAttribute("data-piece");
+        // this.selectedPiece.innerHTML = "";
+        // clickedSquare.setAttribute("data-piece", JSON.stringify(piece));
+        // clickedSquare.appendChild(pieceImg);
+        // this.deselectPiece();
+        // console.log(this.boardLogic);
         //Board logic is not getting updated!
       };
     };

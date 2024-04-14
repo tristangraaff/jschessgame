@@ -7,6 +7,7 @@ import { factory } from "./main.js";
 
 export default class Piece {
   constructor(color) {
+    //this.boardState = factory._board;
     this.color = color;
     this.hasMoved = false;
     this.possibleMoves = [];
@@ -71,11 +72,10 @@ export default class Piece {
     };
   };
 
-  movePiece(currentPosition, validMove, pieceName) {
-    let boardState = factory._board;
-    boardState[currentPosition[0]][currentPosition[1]] = false;
-    const validPosition = this.calculatePosition(currentPosition, validMove);
-    boardState[validPosition[0]][validPosition[1]] = pieceName;
+  movePiece(currentPosition, validPosition) {
+    const pieceToBeMoved = factory._board[currentPosition[0]][currentPosition[1]];
+    factory._board[currentPosition[0]][currentPosition[1]] = false;
+    factory._board[validPosition[0]][validPosition[1]] = pieceToBeMoved;
   };
 
   checkIfPieceCanBeCaptured(ownPosition, otherPosition) {

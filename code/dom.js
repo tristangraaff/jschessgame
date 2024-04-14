@@ -6,6 +6,8 @@ import { removeDuplicateArrays } from "./general-utils.js";
 
 class BoardDOMConnection {
   constructor(){
+    this.boardLogic = factory._board;
+    this.chessBoard = document.getElementById("chess_board");
     this.addBoardToDom();
     this.addPiecesToDom();
   };
@@ -23,12 +25,11 @@ class BoardDOMConnection {
   };
 
   addBoardToDom() {
-    const chessBoard = document.getElementById("chess_board");
-    chessBoard.innerHTML = "";
+    this.chessBoard.innerHTML = "";
     for (let row = 0; row < factory.board.length; row++) {
       const rowDOM = document.createElement("div");
       rowDOM.classList.add("row", `row_index_${row}`);
-      chessBoard.appendChild(rowDOM);
+      this.chessBoard.appendChild(rowDOM);
 
       for (let col = 0; col < factory.board[row].length; col++) {
         const square = this.createSquare(row, col);
@@ -38,8 +39,7 @@ class BoardDOMConnection {
   };
 
   addPiecesToDom() {
-    const chessBoard = document.getElementById("chess_board");
-    const rows = chessBoard.children;
+    const rows = this.chessBoard.children;
 
     for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
       const row = rows[rowIndex];
@@ -47,6 +47,8 @@ class BoardDOMConnection {
       
       for (let colIndex = 0; colIndex < colLength; colIndex++) {
         const square = row.children[colIndex];
+        square.removeAttribute("data-piece");
+        square.innerHTML = "";
         const piece = factory.board[rowIndex][colIndex];
         
         if (typeof piece === "object") {
@@ -57,10 +59,6 @@ class BoardDOMConnection {
         };
       };
     };
-  };
-
-  updateDom() {
-    console.log(this.boardLogic);
   };
 };
 
@@ -170,8 +168,11 @@ class PieceMovement extends PieceSelector{
         const [rowIndexSelectedPiece, colIndexSelectedPiece] = selectedPieceLocation;
         const selectedPieceOnBoard = this.boardLogic[rowIndexSelectedPiece][colIndexSelectedPiece];
         selectedPieceOnBoard.movePiece(selectedPieceLocation, clickedSquareLocation);
-        console.log(this.boardLogic);
-;
+        this.deselectPiece();
+        initiializeDOM.addPiecesToDom();
+        // Wil ik de hele DOM wel renderen? Volgens mij sla ik hasMoved info etc op in de intstance zelf
+
+
         // this.boardLogic[rowIndexSelectedPiece][colIndexSelectedPiece] = false;
         // this.boardLogic[rowIndexClickedSquare][colIndexClickedSquare] = selectedPieceOnBoard;
         //console.log(this.boardLogic);

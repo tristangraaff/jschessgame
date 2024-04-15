@@ -56,6 +56,7 @@ export default class Piece {
   };
 
   getValidMoves(currentPosition, possibleMoves) {
+    this.validMoves = [];
     for (let i = 0; i< this.possibleMoves.length; i++) {
       const possiblePosition = this.calculatePosition(currentPosition, possibleMoves[i]);
       const positionOnBoard = this.checkIfPositionIsOnBoard(possiblePosition);

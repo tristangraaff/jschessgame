@@ -68,7 +68,7 @@ class PieceSelector {
     this.chessBoard = document.getElementById("chess_board");
     this.chessBoard.addEventListener("click", this.handleSquareClick.bind(this));
     this.pieceIsSelected = false;
-    this.selectedDomPiece;
+    this.selectedDomPiece = null;
     this.validMoves = [];
   };
 
@@ -84,16 +84,16 @@ class PieceSelector {
   };
 
   deselectPiece() {
-    this.pieceIsSelected = false;
-    this.pieceIsSelected = false;
     this.removeColorContainer();
     this.removeSelectedSquareHighlight();
+    this.pieceIsSelected = false;
+    this.selectedDomPiece = null;
     this.validMoves = [];
   };
 
   selectPiece(clickedSquare) {
     this.pieceIsSelected = true;
-    this.removeColorContainer();
+    this.removeColorContainer(); 
     this.removeSelectedSquareHighlight();
     this.highLightSelectedSquare(clickedSquare);
     this.highlightValidMoves(clickedSquare);
@@ -107,9 +107,8 @@ class PieceSelector {
   };
 
   removeSelectedSquareHighlight() {
-    const selectedDomPiece = document.querySelector(".highlight_selected_piece");
-    if (selectedDomPiece !== null) {
-      selectedDomPiece.classList.remove("highlight_selected_piece");
+    if (this.selectedDomPiece !== null) {
+      this.selectedDomPiece.classList.remove("highlight_selected_piece");
     };
   };
 

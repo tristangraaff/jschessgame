@@ -9,7 +9,6 @@ export default class Piece {
   constructor(color) {
     //this.boardState = factory._board;
     this.color = color;
-    this.hasMoved = false;
     this.possibleMoves = [];
     this.validMoves = [];
   };
@@ -57,12 +56,14 @@ export default class Piece {
 
   getValidMoves(currentPosition, possibleMoves) {
     this.validMoves = [];
-    for (let i = 0; i< this.possibleMoves.length; i++) {
-      const possiblePosition = this.calculatePosition(currentPosition, possibleMoves[i]);
+    const moves = Array.isArray(possibleMoves[0]) ? possibleMoves : [possibleMoves];
+
+    for (let i = 0; i< moves.length; i++) {
+      const possiblePosition = this.calculatePosition(currentPosition, moves[i]);
       const positionOnBoard = this.checkIfPositionIsOnBoard(possiblePosition);
       if (positionOnBoard) {
         //console.log("Possible position: " + possiblePosition, positionOnBoard);
-        const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, possibleMoves[i]);
+        const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, moves[i]);
         const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
         if (positionOnBoard && squareIsEmpty && !pieceInTheWay) {
           this.validMoves.push(possiblePosition);
@@ -75,6 +76,11 @@ export default class Piece {
 
   movePiece(currentPosition, validPosition) {
     const pieceToBeMoved = factory._board[currentPosition[0]][currentPosition[1]];
+    if (pieceToBeMoved instanceof Pawn && !pieceToBeMoved.hasMoved) {
+      pieceToBeMoved.hasMoved = true;
+      pieceToBeMoved.getPossibleMoves();
+    };
+
     factory._board[currentPosition[0]][currentPosition[1]] = false;
     factory._board[validPosition[0]][validPosition[1]] = pieceToBeMoved;
   };
@@ -99,6 +105,7 @@ export default class Piece {
 export class Pawn extends Piece {
   constructor(color) {
     super(color);
+    this.hasMoved = false;
     this.getPossibleMoves();
   };
   

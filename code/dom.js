@@ -1,5 +1,5 @@
 import { incrementString, decrementString } from "./general-utils.js";
-//import GameState from "./main.js";
+import GameState from "./main.js";
 import { factory } from "./main.js";
 import { removeDuplicateArrays } from "./general-utils.js";
 //import Piece from "./pieceLogic.js";
@@ -70,6 +70,7 @@ class PieceSelector {
     this.pieceIsSelected = false;
     this.selectedDomPiece = null;
     this.validMoves = [];
+    this.gameState = GameState;
   };
 
   handleSquareClick(event) {
@@ -92,7 +93,17 @@ class PieceSelector {
   };
 
   selectPiece(clickedSquare) {
+    //Er zit nu een bugje in als je direct van piece naar piece klikt dat ze allemaal rood geselecteerd blijven
+    const pieceData = JSON.parse(clickedSquare.getAttribute("data-piece"));
+
+    if (pieceData.color !== this.gameState.currentPlayer) {
+      this.deselectPiece();
+      return;
+    };
+
     this.pieceIsSelected = true;
+    this.selectedDomPiece = clickedSquare;
+
     this.removeColorContainer(); 
     this.removeSelectedSquareHighlight();
     this.highLightSelectedSquare(clickedSquare);
@@ -117,7 +128,6 @@ class PieceSelector {
   };
 
   highlightValidMoves(clickedSquare) {
-    this.selectedDomPiece = clickedSquare;
     const [rowIndex, colIndex] = this.getDatasetLocation(clickedSquare); 
     const piece = this.boardLogic[rowIndex][colIndex];
     const validMoves = this.getValidMovesFromPieceLogic(piece, rowIndex, colIndex);

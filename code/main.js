@@ -14,8 +14,9 @@
 // add capturing pieces 
 
 export default class GameState {
+  static board = Array.from({ length: 8 }, () => Array(8).fill(false));
   static turnCount = 1;
-  static turnPlayer = "white";
+  static currentPlayer = "white";
   static activeGame = true;
   static endOfTurn = false;
 
@@ -29,7 +30,8 @@ export default class GameState {
   // agreement
 
   static checkForCheckmate() {
-
+    //If King is checked, then check for checkmate
+    //Also steelmate?
   };
 
   static changeTurn() {
@@ -45,7 +47,7 @@ export class PieceFactory {
   constructor() {
     this.activePieces = [];
     this.capturedPieces = [];
-    this.board = Array.from({ length: 8 }, () => Array(8).fill(false));
+    this.board = GameState.board;
   };
   
   addPiece(pieceInstance, row, col) {

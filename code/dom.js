@@ -164,32 +164,27 @@ class PieceMovement extends PieceSelector{
       const squareIsIncludedInValidMoves = this.validMoves.some(a => clickedSquareLocation.every((v, i) => v === a[i]));
 
       if (squareIsIncludedInValidMoves) {
-        const selectedPieceLocation = this.getDatasetLocation(this.selectedDomPiece);
-        const [rowIndexSelectedPiece, colIndexSelectedPiece] = selectedPieceLocation;
-        const selectedPieceOnBoard = this.boardLogic[rowIndexSelectedPiece][colIndexSelectedPiece];
-        selectedPieceOnBoard.movePiece(selectedPieceLocation, clickedSquareLocation);
-        this.deselectPiece();
-        initiializeDOM.addPiecesToDom();
-        // Wil ik de hele DOM wel renderen? Volgens mij sla ik hasMoved info etc op in de intstance zelf
-
-
-        // this.boardLogic[rowIndexSelectedPiece][colIndexSelectedPiece] = false;
-        // this.boardLogic[rowIndexClickedSquare][colIndexClickedSquare] = selectedPieceOnBoard;
-        //console.log(this.boardLogic);
-
-
-        //console.log(this.selectedPiece);
-        // const piece = JSON.parse(this.selectedPiece.getAttribute("data-piece"));
-        // const pieceImg = this.selectedPiece.children[0];
-        // this.selectedPiece.removeAttribute("data-piece");
-        // this.selectedPiece.innerHTML = "";
-        // clickedSquare.setAttribute("data-piece", JSON.stringify(piece));
-        // clickedSquare.appendChild(pieceImg);
-        // this.deselectPiece();
-        // console.log(this.boardLogic);
-        //Board logic is not getting updated!
+        this.updateBoardState(clickedSquareLocation);
+        this.moveDomPiece(clickedSquare);
       };
     };
+  };
+
+  updateBoardState(squareLocation) {
+    const selectedPieceLocation = this.getDatasetLocation(this.selectedDomPiece);
+    const [rowIndexSelectedPiece, colIndexSelectedPiece] = selectedPieceLocation;
+    const selectedPieceOnBoard = this.boardLogic[rowIndexSelectedPiece][colIndexSelectedPiece];
+    selectedPieceOnBoard.movePiece(selectedPieceLocation, squareLocation);
+  };
+
+  moveDomPiece(square) {
+    const piece = JSON.parse(this.selectedDomPiece.getAttribute("data-piece"));
+    const pieceImg = this.selectedDomPiece.children[0];
+    this.selectedDomPiece.removeAttribute("data-piece");
+    this.selectedDomPiece.innerHTML = "";
+    square.setAttribute("data-piece", JSON.stringify(piece));
+    square.appendChild(pieceImg);
+    this.deselectPiece();
   };
 
   capturePiece() {

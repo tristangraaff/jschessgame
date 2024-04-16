@@ -35,23 +35,39 @@ export default class Piece {
 
   checkIfPieceIsInTheWay(position, moveVector) {
     const [startRow, startCol] = position;
-    const [desiredRow, desiredCol] = moveVector;
-    //console.log("current position: " + position);
-    //console.log("Move vector: " + moveVector);
+    const [rowMove, colMove] = moveVector;
+    const [desiredRow, desiredCol] = [startRow + rowMove, startCol + colMove];
+    console.log("current position: " + position);
+    console.log("Move vector: " + moveVector);
+    console.log("Desired row/col: " + [desiredRow, desiredCol]);
+    console.log(factory.board);
 
-    const rowIncrement = Math.sign(desiredRow);
-    const colIncrement = Math.sign(desiredCol);
+    const rowIncrement = Math.sign(rowMove);
+    const colIncrement = Math.sign(colMove);
 
-    //console.log("Row increment: " + rowIncrement);
-    //console.log("Col increment: " + colIncrement);
+    // console.log("Row increment: " + rowIncrement);
+    // console.log("Col increment: " + colIncrement);
 
-    for (let row = startRow + rowIncrement, col = startCol + colIncrement; row !== desiredRow; row += rowIncrement, col += colIncrement) {
-      if (typeof factory.board[row][col] === "object") {
-        return true;
-      } else if (typeof factory.board[row][col] === "boolean") {
-        return false;
-      };
+    let row = startRow + rowIncrement;
+    let col = startCol + colIncrement
+
+    // console.log("Starting row: " + row);
+    // console.log("Starting col: " + col);
+
+    for (row, col; row !== desiredRow; row += rowIncrement, col += colIncrement) {
+      console.log(factory.board[row][col]);
     };
+
+    console.log("NEXXXXT");
+
+    // for (let row = startRow + rowIncrement, col = startCol + colIncrement; row !== desiredRow; row += rowIncrement, col += colIncrement) {
+    //   console.log("Looped location: " + [row, col]);
+    //   if (typeof factory.board[row][col] === "object") {
+    //     return true;
+    //   } else if (typeof factory.board[row][col] === "boolean") {
+    //     return false;
+    //   };
+    // };
   };
 
   getValidMoves(currentPosition, possibleMoves) {
@@ -62,7 +78,6 @@ export default class Piece {
       const possiblePosition = this.calculatePosition(currentPosition, moves[i]);
       const positionOnBoard = this.checkIfPositionIsOnBoard(possiblePosition);
       if (positionOnBoard) {
-        //console.log("Possible position: " + possiblePosition, positionOnBoard);
         const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, moves[i]);
         const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
         if (positionOnBoard && squareIsEmpty && !pieceInTheWay) {

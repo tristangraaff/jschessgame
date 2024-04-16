@@ -93,7 +93,6 @@ class PieceSelector {
   };
 
   selectPiece(clickedSquare) {
-    //Er zit nu een bugje in als je direct van piece naar piece klikt dat ze allemaal rood geselecteerd blijven. Ook wordt gedeselecteerd wanneer op een piece van de andere kleur wordt geklikt.
     const pieceData = JSON.parse(clickedSquare.getAttribute("data-piece"));
 
     if (pieceData.color !== this.gameState.currentPlayer) {
@@ -142,6 +141,7 @@ class PieceSelector {
   getValidMovesFromPieceLogic(piece, rowIndex, colIndex) {
     const possibleMoves = piece.possibleMoves;
     const currentPosition = [rowIndex, colIndex];
+    console.log(piece);
     piece.getValidMoves(currentPosition, possibleMoves);
     this.validMoves = piece.validMoves;
     this.validMoves = removeDuplicateArrays(this.validMoves);
@@ -207,7 +207,6 @@ class PieceMovement extends PieceSelector{
   flipDomPieces() {
     Array.from(this.chessBoard.children).forEach(row => {
       Array.from(row.children).forEach(col => {
-        console.log(col.children[0]);
         if (col.children[0] !== undefined) {
           col.children[0].classList.toggle("flip");
         };

@@ -18,7 +18,6 @@ export default class GameState {
   static turnCount = 1;
   static currentPlayer = "white";
   static activeGame = true;
-  static endOfTurn = false;
 
   // checkmate
   // resignation
@@ -35,11 +34,8 @@ export default class GameState {
   };
 
   static changeTurn() {
-    if (this.endOfTurn) {
       this.turnCount += 1;
-      this.turnPlayer = (this.turnPlayer === "white") ? "black" : "white";
-      this.endOfTurn = false;
-    };
+      this.currentPlayer = (this.currentPlayer === "white") ? "black" : "white";
   };
 };
 

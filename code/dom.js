@@ -77,10 +77,6 @@ class PieceSelector {
     const clickedSquare = event.target.closest(".square");
     if (!clickedSquare) return;
 
-    console.log(this.pieceIsSelected);
-    console.log(this.selectedDomPiece);
-    console.log(clickedSquare);
-
     if (this.pieceIsSelected && clickedSquare === this.selectedDomPiece) {
       this.deselectPiece();
     } else if (clickedSquare.hasAttribute("data-piece")) {
@@ -199,6 +195,24 @@ class PieceMovement extends PieceSelector{
     square.setAttribute("data-piece", JSON.stringify(piece));
     square.appendChild(pieceImg);
     this.deselectPiece();
+    this.gameState.changeTurn();
+    this.flipDomBoard();
+    this.flipDomPieces();
+  };
+
+  flipDomBoard() {
+    this.chessBoard.classList.toggle("flip");
+  };
+
+  flipDomPieces() {
+    Array.from(this.chessBoard.children).forEach(row => {
+      Array.from(row.children).forEach(col => {
+        console.log(col.children[0]);
+        if (col.children[0] !== undefined) {
+          col.children[0].classList.toggle("flip");
+        };
+      });
+    });
   };
 
   capturePiece() {

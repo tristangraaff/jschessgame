@@ -77,6 +77,10 @@ class PieceSelector {
     const clickedSquare = event.target.closest(".square");
     if (!clickedSquare) return;
 
+    console.log(this.pieceIsSelected);
+    console.log(this.selectedDomPiece);
+    console.log(clickedSquare);
+
     if (this.pieceIsSelected && clickedSquare === this.selectedDomPiece) {
       this.deselectPiece();
     } else if (clickedSquare.hasAttribute("data-piece")) {
@@ -93,21 +97,21 @@ class PieceSelector {
   };
 
   selectPiece(clickedSquare) {
-    //Er zit nu een bugje in als je direct van piece naar piece klikt dat ze allemaal rood geselecteerd blijven
+    //Er zit nu een bugje in als je direct van piece naar piece klikt dat ze allemaal rood geselecteerd blijven. Ook wordt gedeselecteerd wanneer op een piece van de andere kleur wordt geklikt.
     const pieceData = JSON.parse(clickedSquare.getAttribute("data-piece"));
 
     if (pieceData.color !== this.gameState.currentPlayer) {
-      this.deselectPiece();
+      //this.deselectPiece();
       return;
     };
-
-    this.pieceIsSelected = true;
-    this.selectedDomPiece = clickedSquare;
 
     this.removeColorContainer(); 
     this.removeSelectedSquareHighlight();
     this.highLightSelectedSquare(clickedSquare);
     this.highlightValidMoves(clickedSquare);
+
+    this.pieceIsSelected = true;
+    this.selectedDomPiece = clickedSquare;
   };
 
   removeColorContainer() {
@@ -119,6 +123,7 @@ class PieceSelector {
 
   removeSelectedSquareHighlight() {
     if (this.selectedDomPiece !== null) {
+      //console.log(this.selectedDomPiece);
       this.selectedDomPiece.classList.remove("highlight_selected_piece");
     };
   };

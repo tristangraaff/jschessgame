@@ -37,37 +37,22 @@ export default class Piece {
     const [startRow, startCol] = position;
     const [rowMove, colMove] = moveVector;
     const [desiredRow, desiredCol] = [startRow + rowMove, startCol + colMove];
-    console.log("current position: " + position);
-    console.log("Move vector: " + moveVector);
-    console.log("Desired row/col: " + [desiredRow, desiredCol]);
-    console.log(factory.board);
 
     const rowIncrement = Math.sign(rowMove);
     const colIncrement = Math.sign(colMove);
 
-    // console.log("Row increment: " + rowIncrement);
-    // console.log("Col increment: " + colIncrement);
-
     let row = startRow + rowIncrement;
     let col = startCol + colIncrement
 
-    // console.log("Starting row: " + row);
-    // console.log("Starting col: " + col);
+    let pieceInTheWay = false;
 
-    for (row, col; row !== desiredRow; row += rowIncrement, col += colIncrement) {
-      console.log(factory.board[row][col]);
+    for (; row !== desiredRow || col !== desiredCol; row += rowIncrement, col += colIncrement) {
+      if (typeof factory.board[row][col] === "object") {
+        return pieceInTheWay = true;
+      };
     };
-
-    console.log("NEXXXXT");
-
-    // for (let row = startRow + rowIncrement, col = startCol + colIncrement; row !== desiredRow; row += rowIncrement, col += colIncrement) {
-    //   console.log("Looped location: " + [row, col]);
-    //   if (typeof factory.board[row][col] === "object") {
-    //     return true;
-    //   } else if (typeof factory.board[row][col] === "boolean") {
-    //     return false;
-    //   };
-    // };
+  
+    return pieceInTheWay;
   };
 
   getValidMoves(currentPosition, possibleMoves) {
@@ -83,9 +68,7 @@ export default class Piece {
         if (positionOnBoard && squareIsEmpty && !pieceInTheWay) {
           this.validMoves.push(possiblePosition);
         };
-      } else {
-        //console.log("Move was not valid. positionOnBoard = " + positionOnBoard + " and squareIsEmpty = " + squareIsEmpty);
-      }; 
+      };
     };
   };
 

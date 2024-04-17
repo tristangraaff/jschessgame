@@ -1,4 +1,5 @@
 import { factory } from "./main.js";
+import GameState from "./main.js";
   //Check if Piece is in the way for pawn and rokeren!
   // Write capture logic
   // Add rokeren
@@ -11,6 +12,8 @@ export default class Piece {
     this.color = color;
     this.possibleMoves = [];
     this.validMoves = [];
+    this.validCaptures = [];
+    this.gameState = GameState;
   };
 
   calculatePosition(currentPosition, moveVector) {
@@ -31,6 +34,15 @@ export default class Piece {
 
   checkIfSquareIsEmpty(position) {
     return factory.board[position[0]][position[1]] === false ? true : false;
+  };
+
+  isEnemyPosition(position) {
+    const boardPosition = factory.board[position[0]][position[1]];
+    if (typeof boardPosition === "object" && this.gameState.currentPlayer !== boardPosition.color) {
+      return true;
+    } else {
+      return false;
+    };
   };
 
   checkIfPieceIsInTheWay(position, moveVector) {
@@ -57,6 +69,7 @@ export default class Piece {
 
   getValidMoves(currentPosition, possibleMoves) {
     this.validMoves = [];
+    this.validCaptures = [];
     const moves = Array.isArray(possibleMoves[0]) ? possibleMoves : [possibleMoves];
 
     for (let i = 0; i< moves.length; i++) {
@@ -65,8 +78,11 @@ export default class Piece {
       if (positionOnBoard) {
         const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, moves[i]);
         const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
+        const isEnemyPosition = this.isEnemyPosition(possiblePosition);
         if (positionOnBoard && squareIsEmpty && !pieceInTheWay) {
           this.validMoves.push(possiblePosition);
+        } else if (positionOnBoard && isEnemyPosition && !pieceInTheWay) {
+          this.validCaptures.push(possiblePosition);
         };
       };
     };
@@ -92,9 +108,9 @@ export default class Piece {
 
     if (this.constructor.name != "Pawn") {
 
-    };
+    }
     
-    if (this.constructor.name == "Pawn") {
+    else if (this.constructor.name == "Pawn") {
 
     };
   };
@@ -232,10 +248,10 @@ export class King extends Piece {
   };
 };
 
-for (let i = 0; i < 8; i++) {
-  factory.addPiece(new Pawn("black"), 1, i);
-  factory.addPiece(new Pawn("white"), 6, i);
-};
+// for (let i = 0; i < 8; i++) {
+//   factory.addPiece(new Pawn("black"), 1, i);
+//   factory.addPiece(new Pawn("white"), 6, i);
+// };
 
 factory.addPiece(new Rook("black"), 0, 0);
 factory.addPiece(new Rook("black"), 0, 7);

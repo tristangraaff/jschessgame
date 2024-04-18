@@ -112,7 +112,15 @@ class PieceSelector {
   removeColorContainer() {
     const colorContainers = document.querySelectorAll(".color_container_valid_moves");
     colorContainers.forEach((container) => {
-      container.remove();
+      if (!container.hasChildNodes()) {
+        container.remove();
+      } else {
+        console.log(container.children[0]);
+        const imgElement = container.children[0];
+        container.removeChild(imgElement);
+        container.parentNode.appendChild(imgElement);
+        container.remove();
+      };
     });
   };
 
@@ -152,9 +160,17 @@ class PieceSelector {
     squares.forEach((square) => {
       const htmlLocation = square.join();
       const htmlElement = document.querySelector(`[data-location='${htmlLocation}']`);
+      console.log(htmlElement);
       const container = document.createElement("div");
       container.classList.add("color_container_valid_moves");
-      htmlElement.appendChild(container);
+      if (!htmlElement.hasChildNodes()) {
+        htmlElement.appendChild(container);
+      } else {
+        const imgElement = htmlElement.children[0];
+        htmlElement.removeChild(imgElement);
+        container.appendChild(imgElement);
+        htmlElement.appendChild(container);
+      };
     });
   };
 };

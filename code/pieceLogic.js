@@ -12,7 +12,6 @@ export default class Piece {
     this.color = color;
     this.possibleMoves = [];
     this.validMoves = [];
-    this.validCaptures = [];
     this.gameState = GameState;
   };
 
@@ -69,7 +68,6 @@ export default class Piece {
 
   getValidMoves(currentPosition, possibleMoves) {
     this.validMoves = [];
-    this.validCaptures = [];
     const moves = Array.isArray(possibleMoves[0]) ? possibleMoves : [possibleMoves];
 
     for (let i = 0; i< moves.length; i++) {
@@ -82,7 +80,7 @@ export default class Piece {
         if (positionOnBoard && squareIsEmpty && !pieceInTheWay) {
           this.validMoves.push(possiblePosition);
         } else if (positionOnBoard && isEnemyPosition && !pieceInTheWay) {
-          this.validCaptures.push(possiblePosition);
+          this.validMoves.push(possiblePosition);
         };
       };
     };

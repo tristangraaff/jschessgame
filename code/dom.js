@@ -204,6 +204,9 @@ class PieceMovement extends PieceSelector{
   };
 
   moveDomPiece(square) {
+    if (square.hasChildNodes) {
+      square.removeChild(square.children[0]);
+    };
     const piece = JSON.parse(this.selectedDomPiece.getAttribute("data-piece"));
     const pieceImg = this.selectedDomPiece.children[0];
     this.selectedDomPiece.removeAttribute("data-piece");

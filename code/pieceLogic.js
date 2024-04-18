@@ -67,6 +67,10 @@ export default class Piece {
   };
 
   getValidMoves(currentPosition, possibleMoves) {
+    this.calculateValidMoves(currentPosition, possibleMoves);
+  };
+
+  calculateValidMoves(currentPosition, possibleMoves) {
     this.validMoves = [];
     const moves = Array.isArray(possibleMoves[0]) ? possibleMoves : [possibleMoves];
 
@@ -116,6 +120,7 @@ export class Pawn extends Piece {
   constructor(color) {
     super(color);
     this.hasMoved = false;
+    this.possibleCaptureMoves = [];
     this.getPossibleMoves();
   };
   
@@ -125,6 +130,26 @@ export class Pawn extends Piece {
     } else if (!this.hasMoved) {
       this.possibleMoves = this.color === "white" ? [[-1, 0], [-2, 0]] : [[1, 0], [2, 0]];
     };
+
+    const possibleCaptureMoves = this.color === "white" ? [[-1, -1], [-1, 1]] : [[1, -1], [1, 1]];
+    this.possibleCaptureMoves = possibleCaptureMoves;
+  };
+
+  //This method overwrites the method in the parent class since the Pawn's capturing rules are different from other pieces.
+  getValidMoves(currentPosition, possibleMoves) {
+    let isEnemyPosition = false;
+
+    //I'm going to use this.getPossibleMoves here because it's better for SoC. The other getValidMoves functionality get's it's input from the DOM through a param, that needs to be refactored later on.
+    this.possibleCaptureMoves.forEach(captureMove => {
+      const possibleCapture = this.calculatePosition(currentPosition, captureMove);
+      isEnemyPosition = this.isEnemyPosition(possibleCapture);
+      if (isEnemyPosition) {
+        this.validMoves.push(possibleCapture);
+      };
+    });
+
+    isEnemyPosition = false;
+    this.calculateValidMoves(currentPosition, possibleMoves, isEnemyPosition);
   };
 };
 
@@ -244,10 +269,10 @@ export class King extends Piece {
   };
 };
 
-// for (let i = 0; i < 8; i++) {
-//   factory.addPiece(new Pawn("black"), 1, i);
-//   factory.addPiece(new Pawn("white"), 6, i);
-// };
+for (let i = 0; i < 8; i++) {
+  factory.addPiece(new Pawn("black"), 1, i);
+  factory.addPiece(new Pawn("white"), 6, i);
+};
 
 factory.addPiece(new Rook("black"), 0, 0);
 factory.addPiece(new Rook("black"), 0, 7);

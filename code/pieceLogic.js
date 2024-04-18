@@ -77,9 +77,7 @@ export default class Piece {
         const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, moves[i]);
         const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
         const isEnemyPosition = this.isEnemyPosition(possiblePosition);
-        if (positionOnBoard && squareIsEmpty && !pieceInTheWay) {
-          this.validMoves.push(possiblePosition);
-        } else if (positionOnBoard && isEnemyPosition && !pieceInTheWay) {
+        if ((positionOnBoard && !pieceInTheWay) && (squareIsEmpty || isEnemyPosition)) {
           this.validMoves.push(possiblePosition);
         };
       };

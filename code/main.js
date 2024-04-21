@@ -9,15 +9,14 @@
 // Find out why non imported test code is tested
 // Test existing DOM code
 // Add turn logic / win condition
-// add movement
 // add logic per piece: special rules (rokeren, en passant)
-// add capturing pieces 
 
 export default class GameState {
   static board = Array.from({ length: 8 }, () => Array(8).fill(false));
   static turnCount = 1;
   static currentPlayer = "white";
   static activeGame = true;
+  static kingChecked = false;
 
   // checkmate
   // resignation
@@ -28,14 +27,12 @@ export default class GameState {
   // repetition
   // agreement
 
-  static checkForCheckmate() {
-    //If King is checked, then check for checkmate
-    //Also steelmate?
-  };
-
   static changeTurn() {
       this.turnCount += 1;
       this.currentPlayer = (this.currentPlayer === "white") ? "black" : "white";
+      console.log(this.kingChecked);
+      this.kingChecked = false;
+      console.log(this.kingChecked);
   };
 };
 

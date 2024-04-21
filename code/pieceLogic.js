@@ -13,6 +13,7 @@ export default class Piece {
     this.possibleMoves = [];
     this.validMoves = [];
     this.gameState = GameState;
+    this.instanceIsPawn = false;
   };
 
   calculatePosition(currentPosition, moveVector) {
@@ -68,7 +69,8 @@ export default class Piece {
 
   getValidMoves(currentPosition, possibleMoves) {
     this.validMoves = [];
-    this.calculateValidMoves(currentPosition, possibleMoves);
+    this.calculateValidMoves(currentPosition, possibleMoves, this.instanceIsPawn);
+    console.log(this.validMoves);
   };
 
   calculateValidMoves(currentPosition, possibleMoves, dealingWithPawn) {
@@ -108,22 +110,35 @@ export default class Piece {
 
     factory._board[currentPosition[0]][currentPosition[1]] = false;
     factory._board[validPosition[0]][validPosition[1]] = pieceToBeMoved;
+
+    this.checkIfKingIsChecked(validPosition);
   };
 
-  checkIfPieceCanBeCaptured(ownPosition, otherPosition) {
-    //rest
-    //get all possible moves
-    //check for each move
-      //check if square is empty
-    //check if piece is opposite color
-
-    if (this.constructor.name != "Pawn") {
-
-    }
-    
-    else if (this.constructor.name == "Pawn") {
-
+  checkIfKingIsChecked(position) {
+    const piece = factory._board[position[0]][position[1]];
+    if (piece.constructor.name === "Pawn") {
+      this.instanceIsPawn = true;
     };
+    const possibleMoves = piece.possibleMoves;
+
+    this.getValidMoves(position, possibleMoves);
+    this.validMoves.forEach(validMove => {
+      const [rowIndex, colIndex] = validMove;
+      if (typeof factory.board[rowIndex][colIndex] === "object") {
+        if (factory.board[rowIndex][colIndex].constructor.name === "King") {
+          this.gameState.kingChecked = true;
+        };
+      };
+    });
+
+    if (this.gameState.kingChecked) {
+      this.checkForCheckmate();
+    };
+  };
+
+  checkForCheckmate() {
+    //Also check for Steelmate here?
+    console.log("begore")
   };
 };
 
@@ -160,8 +175,9 @@ export class Pawn extends Piece {
       };
     });
 
-    const dealingWithPawn = true;
-    this.calculateValidMoves(currentPosition, this.possibleMoves, dealingWithPawn);
+    this.instanceIsPawn = true;
+    this.calculateValidMoves(currentPosition, this.possibleMoves, this.instanceIsPawn);
+    console.log(this.validMoves);
   };
 };
 

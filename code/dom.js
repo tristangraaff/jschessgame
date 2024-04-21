@@ -149,7 +149,7 @@ class PieceSelector {
   getValidMovesFromPieceLogic(piece, rowIndex, colIndex) {
     const possibleMoves = piece.possibleMoves;
     const currentPosition = [rowIndex, colIndex];
-    console.log(piece);
+    //console.log(piece);
     piece.getValidMoves(currentPosition, possibleMoves);
     this.validMoves = piece.validMoves;
     this.validMoves = removeDuplicateArrays(this.validMoves);
@@ -160,7 +160,7 @@ class PieceSelector {
     squares.forEach((square) => {
       const htmlLocation = square.join();
       const htmlElement = document.querySelector(`[data-location='${htmlLocation}']`);
-      console.log(htmlElement);
+      //console.log(htmlElement);
       const container = document.createElement("div");
       container.classList.add("color_container_valid_moves");
       if (!htmlElement.hasChildNodes()) {

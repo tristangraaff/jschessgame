@@ -71,7 +71,7 @@ export default class Piece {
     this.calculateValidMoves(currentPosition, possibleMoves);
   };
 
-  calculateValidMoves(currentPosition, possibleMoves) {
+  calculateValidMoves(currentPosition, possibleMoves, dealingWithPawn) {
     const moves = Array.isArray(possibleMoves[0]) ? possibleMoves : [possibleMoves];
 
     for (let i = 0; i< moves.length; i++) {
@@ -81,9 +81,19 @@ export default class Piece {
         const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, moves[i]);
         const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
         const isEnemyPosition = this.isEnemyPosition(possiblePosition);
-        if ((positionOnBoard && !pieceInTheWay) && (squareIsEmpty || isEnemyPosition)) {
-          const possiblePositionArray = [possiblePosition];
-          this.validMoves.push(...possiblePositionArray);
+
+        if (!dealingWithPawn) {
+          if ((positionOnBoard && !pieceInTheWay) && (squareIsEmpty || isEnemyPosition)) {
+            const possiblePositionArray = [possiblePosition];
+            this.validMoves.push(...possiblePositionArray);
+          };
+        }
+
+        else if (dealingWithPawn) {
+          if (positionOnBoard && !pieceInTheWay && squareIsEmpty) {
+            const possiblePositionArray = [possiblePosition];
+            this.validMoves.push(...possiblePositionArray);
+          };
         };
       };
     };
@@ -139,28 +149,19 @@ export class Pawn extends Piece {
   //This method overwrites the method in the parent class since the Pawn's capturing rules are different from other pieces.
   getValidMoves(currentPosition, possibleMoves) {
     this.validMoves = [];
-    //console.log(currentPosition);
-    //console.log(this.possibleMoves);
-    //console.log(this.possibleCaptureMoves);
-    let isEnemyPosition = false;
-    //console.log("//LOOP//");
 
     //I'm going to use this.getPossibleMoves here because it's better for SoC. The other getValidMoves functionality get's it's input from the DOM through a param, that needs to be refactored later on.
     this.possibleCaptureMoves.forEach(captureMove => {
-      //console.log(captureMove);
       const possibleCapture = this.calculatePosition(currentPosition, captureMove);
-      //console.log(possibleCapture);
-      isEnemyPosition = this.isEnemyPosition(possibleCapture);
-      //console.log(isEnemyPosition);
+      const isEnemyPosition = this.isEnemyPosition(possibleCapture);
+
       if (isEnemyPosition) {
         this.validMoves.push(possibleCapture);
-        console.log(this.validMoves);
       };
     });
 
-    isEnemyPosition = false;
-    this.calculateValidMoves(currentPosition, possibleMoves, isEnemyPosition);
-    console.log(this.validMoves);
+    const dealingWithPawn = true;
+    this.calculateValidMoves(currentPosition, this.possibleMoves, dealingWithPawn);
   };
 };
 

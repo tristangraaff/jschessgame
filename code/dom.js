@@ -115,7 +115,6 @@ class PieceSelector {
       if (!container.hasChildNodes()) {
         container.remove();
       } else {
-        console.log(container.children[0]);
         const imgElement = container.children[0];
         container.removeChild(imgElement);
         container.parentNode.appendChild(imgElement);

@@ -68,9 +68,9 @@ export default class Piece {
   };
 
   getValidMoves(currentPosition, possibleMoves) {
+    console.log(currentPosition);
     this.validMoves = [];
     this.calculateValidMoves(currentPosition, possibleMoves, this.instanceIsPawn);
-    console.log(this.validMoves);
   };
 
   calculateValidMoves(currentPosition, possibleMoves, dealingWithPawn) {
@@ -78,7 +78,9 @@ export default class Piece {
 
     for (let i = 0; i< moves.length; i++) {
       const possiblePosition = this.calculatePosition(currentPosition, moves[i]);
+      console.log(possiblePosition);
       const positionOnBoard = this.checkIfPositionIsOnBoard(possiblePosition);
+      console.log(positionOnBoard);
       if (positionOnBoard) {
         const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, moves[i]);
         const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
@@ -115,6 +117,8 @@ export default class Piece {
   };
 
   checkIfKingIsChecked(position) {
+    let kingLocation;
+
     const piece = factory._board[position[0]][position[1]];
     if (piece.constructor.name === "Pawn") {
       this.instanceIsPawn = true;
@@ -127,18 +131,37 @@ export default class Piece {
       if (typeof factory.board[rowIndex][colIndex] === "object") {
         if (factory.board[rowIndex][colIndex].constructor.name === "King") {
           this.gameState.kingChecked = true;
+          kingLocation = [rowIndex, colIndex];
         };
       };
     });
 
     if (this.gameState.kingChecked) {
-      this.checkForCheckmate();
+      this.checkForCheckmate(kingLocation);
     };
   };
 
-  checkForCheckmate() {
-    //Also check for Steelmate here?
-    console.log("begore")
+  checkForCheckmate(kingLocation) {
+    //Also check for Stalemate here?
+
+    //Checkmate when:
+    // No possible moves for King
+    const [rowIndex, colIndex] = kingLocation;
+    const king = factory.board[rowIndex][colIndex];
+    this.instanceIsPawn = false;
+    console.log([rowIndex, colIndex]);
+    console.log(king.possibleMoves);
+    this.getValidMoves(kingLocation, king.possibleMoves);
+    console.log(this.validMoves);
+
+
+
+
+    // No pieces can jump in front
+  };
+
+  checkIfKingIsUnchecked() {
+
   };
 };
 
@@ -177,7 +200,6 @@ export class Pawn extends Piece {
 
     this.instanceIsPawn = true;
     this.calculateValidMoves(currentPosition, this.possibleMoves, this.instanceIsPawn);
-    console.log(this.validMoves);
   };
 };
 

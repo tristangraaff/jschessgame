@@ -31,8 +31,8 @@ export default class GameState {
       this.turnCount += 1;
       this.currentPlayer = (this.currentPlayer === "white") ? "black" : "white";
       console.log(this.kingChecked);
-      this.kingChecked = false;
-      console.log(this.kingChecked);
+      //this.kingChecked = false;
+      //console.log(this.kingChecked);
   };
 };
 

@@ -1,5 +1,8 @@
 import { factory } from "./main.js";
 import GameState from "./main.js";
+import cloneDeep from 'https://cdn.skypack.dev/lodash.clonedeep';
+
+
   //Check if Piece is in the way for pawn and rokeren!
   // Write capture logic
   // Add rokeren
@@ -14,6 +17,7 @@ export default class Piece {
     this.validMoves = [];
     this.gameState = GameState;
     this.instanceIsPawn = false;
+    this.checkingForCheckMate = false;
   };
 
   calculatePosition(currentPosition, moveVector) {
@@ -38,10 +42,21 @@ export default class Piece {
 
   isEnemyPosition(position) {
     const boardPosition = factory.board[position[0]][position[1]];
-    if (typeof boardPosition === "object" && this.gameState.currentPlayer !== boardPosition.color) {
-      return true;
-    } else {
-      return false;
+
+    if (!this.checkingForCheckMate) {
+      if (typeof boardPosition === "object" && this.gameState.currentPlayer !== boardPosition.color) {
+        return true;
+      } else {
+        return false;
+      };
+    } 
+
+    else if (this.checkingForCheckMate) {
+      if (typeof boardPosition === "object" && this.gameState.currentPlayer === boardPosition.color) {
+        return true;
+      } else {
+        return false;
+      };
     };
   };
 
@@ -74,21 +89,26 @@ export default class Piece {
   };
 
   calculateValidMoves(currentPosition, possibleMoves, dealingWithPawn) {
+    this.doesMoveExposeKing();
     const moves = Array.isArray(possibleMoves[0]) ? possibleMoves : [possibleMoves];
 
     for (let i = 0; i< moves.length; i++) {
       const possiblePosition = this.calculatePosition(currentPosition, moves[i]);
-      console.log(possiblePosition);
+      console.log("Possible possition: " + possiblePosition);
       const positionOnBoard = this.checkIfPositionIsOnBoard(possiblePosition);
-      console.log(positionOnBoard);
+      console.log("Position on board: " + positionOnBoard);
       if (positionOnBoard) {
         const pieceInTheWay = this.checkIfPieceIsInTheWay(currentPosition, moves[i]);
+        console.log("Piece in the way: " + pieceInTheWay);
         const squareIsEmpty = this.checkIfSquareIsEmpty(possiblePosition); //This does not make it invalid, it means capturing if opposite color
+        console.log("Square is empty: " + squareIsEmpty);
         const isEnemyPosition = this.isEnemyPosition(possiblePosition);
+        console.log("Is enemy position: " + isEnemyPosition);
 
         if (!dealingWithPawn) {
           if ((positionOnBoard && !pieceInTheWay) && (squareIsEmpty || isEnemyPosition)) {
             const possiblePositionArray = [possiblePosition];
+            console.log("Valid position: " + possiblePositionArray);
             this.validMoves.push(...possiblePositionArray);
           };
         }
@@ -96,6 +116,7 @@ export default class Piece {
         else if (dealingWithPawn) {
           if (positionOnBoard && !pieceInTheWay && squareIsEmpty) {
             const possiblePositionArray = [possiblePosition];
+            console.log("Valid position: " + possiblePositionArray);
             this.validMoves.push(...possiblePositionArray);
           };
         };
@@ -113,10 +134,10 @@ export default class Piece {
     factory._board[currentPosition[0]][currentPosition[1]] = false;
     factory._board[validPosition[0]][validPosition[1]] = pieceToBeMoved;
 
-    this.checkIfKingIsChecked(validPosition);
+    this.isKingInCheck(validPosition);
   };
 
-  checkIfKingIsChecked(position) {
+  isKingInCheck(position) {
     let kingLocation;
 
     const piece = factory._board[position[0]][position[1]];
@@ -137,11 +158,13 @@ export default class Piece {
     });
 
     if (this.gameState.kingChecked) {
-      this.checkForCheckmate(kingLocation);
+      this.isCheckmate(kingLocation);
     };
   };
 
-  checkForCheckmate(kingLocation) {
+  isCheckmate(kingLocation) {
+    this.checkingForCheckMate = true;
+    console.log("START NEW");
     //Also check for Stalemate here?
 
     //Checkmate when:
@@ -149,15 +172,19 @@ export default class Piece {
     const [rowIndex, colIndex] = kingLocation;
     const king = factory.board[rowIndex][colIndex];
     this.instanceIsPawn = false;
-    console.log([rowIndex, colIndex]);
-    console.log(king.possibleMoves);
     this.getValidMoves(kingLocation, king.possibleMoves);
-    console.log(this.validMoves);
-
 
 
 
     // No pieces can jump in front
+  };
+
+  doesMoveExposeKing(currentPosition, move) {
+    //simulate the move
+    let boardStateClone = cloneDeep(factory._board);
+    
+
+    //then run isKingInCheck
   };
 
   checkIfKingIsUnchecked() {

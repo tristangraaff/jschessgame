@@ -8,11 +8,13 @@ import cloneDeep from 'https://cdn.skypack.dev/lodash.clonedeep';
   // Add rokeren
   // Add en passant
   // Add pawn reaches end of board
+  // Add piece location to constructor instead of double for looping every time!
 
 export default class Piece {
   constructor(color) {
     //this.boardState = factory._board;
     this.color = color;
+    this.pieceLocation = location;
     this.possibleMoves = [];
     this.validMoves = [];
     this.gameState = GameState;
@@ -89,7 +91,7 @@ export default class Piece {
   };
 
   calculateValidMoves(currentPosition, possibleMoves, dealingWithPawn) {
-    this.doesMoveExposeKing();
+    //this.doesMoveExposeKing(currentPosition, possibleMoves[0]);
     const moves = Array.isArray(possibleMoves[0]) ? possibleMoves : [possibleMoves];
 
     for (let i = 0; i< moves.length; i++) {
@@ -138,6 +140,7 @@ export default class Piece {
   };
 
   isKingInCheck(position) {
+    console.log(position);
     let kingLocation;
 
     const piece = factory._board[position[0]][position[1]];
@@ -182,7 +185,21 @@ export default class Piece {
   doesMoveExposeKing(currentPosition, move) {
     //simulate the move
     let boardStateClone = cloneDeep(factory._board);
-    
+    const newPosition = this.calculatePosition(currentPosition, move);
+    for (let i = 0; i < boardStateClone.length; i++) {
+      const row = boardStateClone[i];
+      const rowIndex = i;
+      for (let i = 0; i < row.length; i++) {
+        const col = row[i];
+        const colIndex = i
+        if (typeof col === "object") {
+          console.log(boardStateClone[rowIndex][colIndex]);
+          const position = [rowIndex, colIndex];
+          const kingChecked = this.isKingInCheck(position);
+          console.log(kingChecked);
+        };
+      };
+    };
 
     //then run isKingInCheck
   };

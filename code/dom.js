@@ -1,12 +1,12 @@
 import { incrementString, decrementString } from "./general-utils.js";
-import GameState from "./main.js";
-import { factory } from "./main.js";
+//import GameState from "./main.js";
+import { GameState, PieceFactory } from "./main.js";
 import { removeDuplicateArrays } from "./general-utils.js";
 //import Piece from "./pieceLogic.js";
 
 class BoardDOMConnection {
   constructor(){
-    this.boardLogic = factory._board;
+    this.boardLogic = PieceFactory._board;
     this.chessBoard = document.getElementById("chess_board");
     this.addBoardToDom();
     this.addPiecesToDom();
@@ -26,12 +26,12 @@ class BoardDOMConnection {
 
   addBoardToDom() {
     this.chessBoard.innerHTML = "";
-    for (let row = 0; row < factory.board.length; row++) {
+    for (let row = 0; row < PieceFactory.board.length; row++) {
       const rowDOM = document.createElement("div");
       rowDOM.classList.add("row", `row_index_${row}`);
       this.chessBoard.appendChild(rowDOM);
 
-      for (let col = 0; col < factory.board[row].length; col++) {
+      for (let col = 0; col < PieceFactory.board[row].length; col++) {
         const square = this.createSquare(row, col);
         rowDOM.appendChild(square);
       }; 
@@ -49,7 +49,7 @@ class BoardDOMConnection {
         const square = row.children[colIndex];
         square.removeAttribute("data-piece");
         square.innerHTML = "";
-        const piece = factory.board[rowIndex][colIndex];
+        const piece = PieceFactory.board[rowIndex][colIndex];
         
         if (typeof piece === "object") {
           square.setAttribute("data-piece", JSON.stringify(piece));
@@ -64,7 +64,7 @@ class BoardDOMConnection {
 
 class PieceSelector {
   constructor() {
-    this.boardLogic = factory._board;
+    this.boardLogic = PieceFactory._board;
     this.chessBoard = document.getElementById("chess_board");
     this.chessBoard.addEventListener("click", this.handleSquareClick.bind(this));
     this.pieceIsSelected = false;
@@ -74,6 +74,7 @@ class PieceSelector {
   };
 
   handleSquareClick(event) {
+    console.log(this.boardLogic);
     const clickedSquare = event.target.closest(".square");
     if (!clickedSquare) return;
 

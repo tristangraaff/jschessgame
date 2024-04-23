@@ -1,5 +1,5 @@
-import { factory } from "./main.js";
-import GameState from "./main.js";
+//import GameState from "./main.js";
+import { PieceFactory, GameState } from "./main.js";
 import cloneDeep from 'https://cdn.skypack.dev/lodash.clonedeep';
 
 
@@ -39,11 +39,11 @@ export default class Piece {
   };
 
   checkIfSquareIsEmpty(position) {
-    return factory.board[position[0]][position[1]] === false ? true : false;
+    return PieceFactory.board[position[0]][position[1]] === false ? true : false;
   };
 
   isEnemyPosition(position) {
-    const boardPosition = factory.board[position[0]][position[1]];
+    const boardPosition = PieceFactory.board[position[0]][position[1]];
 
     if (!this.checkingForCheckMate) {
       if (typeof boardPosition === "object" && this.gameState.currentPlayer !== boardPosition.color) {
@@ -76,7 +76,7 @@ export default class Piece {
     let pieceInTheWay = false;
 
     for (; row !== desiredRow || col !== desiredCol; row += rowIncrement, col += colIncrement) {
-      if (typeof factory.board[row][col] === "object") {
+      if (typeof PieceFactory.board[row][col] === "object") {
         return pieceInTheWay = true;
       };
     };
@@ -127,14 +127,14 @@ export default class Piece {
   };
 
   movePiece(currentPosition, validPosition) {
-    const pieceToBeMoved = factory._board[currentPosition[0]][currentPosition[1]];
+    const pieceToBeMoved = PieceFactory._board[currentPosition[0]][currentPosition[1]];
     if (pieceToBeMoved instanceof Pawn && !pieceToBeMoved.hasMoved) {
       pieceToBeMoved.hasMoved = true;
       pieceToBeMoved.getPossibleMoves();
     };
 
-    factory._board[currentPosition[0]][currentPosition[1]] = false;
-    factory._board[validPosition[0]][validPosition[1]] = pieceToBeMoved;
+    PieceFactory._board[currentPosition[0]][currentPosition[1]] = false;
+    PieceFactory._board[validPosition[0]][validPosition[1]] = pieceToBeMoved;
 
     this.isKingInCheck(validPosition);
   };
@@ -143,7 +143,7 @@ export default class Piece {
     console.log(position);
     let kingLocation;
 
-    const piece = factory._board[position[0]][position[1]];
+    const piece = PieceFactory._board[position[0]][position[1]];
     if (piece.constructor.name === "Pawn") {
       this.instanceIsPawn = true;
     };
@@ -152,8 +152,8 @@ export default class Piece {
     this.getValidMoves(position, possibleMoves);
     this.validMoves.forEach(validMove => {
       const [rowIndex, colIndex] = validMove;
-      if (typeof factory.board[rowIndex][colIndex] === "object") {
-        if (factory.board[rowIndex][colIndex].constructor.name === "King") {
+      if (typeof PieceFactory.board[rowIndex][colIndex] === "object") {
+        if (PieceFactory.board[rowIndex][colIndex].constructor.name === "King") {
           this.gameState.kingChecked = true;
           kingLocation = [rowIndex, colIndex];
         };
@@ -173,7 +173,7 @@ export default class Piece {
     //Checkmate when:
     // No possible moves for King
     const [rowIndex, colIndex] = kingLocation;
-    const king = factory.board[rowIndex][colIndex];
+    const king = PieceFactory.board[rowIndex][colIndex];
     this.instanceIsPawn = false;
     this.getValidMoves(kingLocation, king.possibleMoves);
 
@@ -182,27 +182,27 @@ export default class Piece {
     // No pieces can jump in front
   };
 
-  doesMoveExposeKing(currentPosition, move) {
-    //simulate the move
-    let boardStateClone = cloneDeep(factory._board);
-    const newPosition = this.calculatePosition(currentPosition, move);
-    for (let i = 0; i < boardStateClone.length; i++) {
-      const row = boardStateClone[i];
-      const rowIndex = i;
-      for (let i = 0; i < row.length; i++) {
-        const col = row[i];
-        const colIndex = i
-        if (typeof col === "object") {
-          console.log(boardStateClone[rowIndex][colIndex]);
-          const position = [rowIndex, colIndex];
-          const kingChecked = this.isKingInCheck(position);
-          console.log(kingChecked);
-        };
-      };
-    };
+  // doesMoveExposeKing(currentPosition, move) {
+  //   //simulate the move
+  //   let boardStateClone = cloneDeep(PieceFactory._board);
+  //   const newPosition = this.calculatePosition(currentPosition, move);
+  //   for (let i = 0; i < boardStateClone.length; i++) {
+  //     const row = boardStateClone[i];
+  //     const rowIndex = i;
+  //     for (let i = 0; i < row.length; i++) {
+  //       const col = row[i];
+  //       const colIndex = i
+  //       if (typeof col === "object") {
+  //         console.log(boardStateClone[rowIndex][colIndex]);
+  //         const position = [rowIndex, colIndex];
+  //         const kingChecked = this.isKingInCheck(position);
+  //         console.log(kingChecked);
+  //       };
+  //     };
+  //   };
 
-    //then run isKingInCheck
-  };
+  //   //then run isKingInCheck
+  // };
 
   checkIfKingIsUnchecked() {
 
@@ -364,29 +364,29 @@ export class King extends Piece {
 };
 
 for (let i = 0; i < 8; i++) {
-  factory.addPiece(new Pawn("black"), 1, i);
-  factory.addPiece(new Pawn("white"), 6, i);
+  PieceFactory.addPiece(new Pawn("black"), 1, i);
+  PieceFactory.addPiece(new Pawn("white"), 6, i);
 };
 
-factory.addPiece(new Rook("black"), 0, 0);
-factory.addPiece(new Rook("black"), 0, 7);
-factory.addPiece(new Rook("white"), 7, 0);
-factory.addPiece(new Rook("white"), 7, 7);
+PieceFactory.addPiece(new Rook("black"), 0, 0);
+PieceFactory.addPiece(new Rook("black"), 0, 7);
+PieceFactory.addPiece(new Rook("white"), 7, 0);
+PieceFactory.addPiece(new Rook("white"), 7, 7);
 
-factory.addPiece(new Knight("black"), 0, 1);
-factory.addPiece(new Knight("black"), 0, 6);
-factory.addPiece(new Knight("white"), 7, 1);
-factory.addPiece(new Knight("white"), 7, 6);
+PieceFactory.addPiece(new Knight("black"), 0, 1);
+PieceFactory.addPiece(new Knight("black"), 0, 6);
+PieceFactory.addPiece(new Knight("white"), 7, 1);
+PieceFactory.addPiece(new Knight("white"), 7, 6);
 
-factory.addPiece(new Bishop("black"), 0, 2);
-factory.addPiece(new Bishop("black"), 0, 5);
-factory.addPiece(new Bishop("white"), 7, 2);
-factory.addPiece(new Bishop("white"), 7, 5);
+PieceFactory.addPiece(new Bishop("black"), 0, 2);
+PieceFactory.addPiece(new Bishop("black"), 0, 5);
+PieceFactory.addPiece(new Bishop("white"), 7, 2);
+PieceFactory.addPiece(new Bishop("white"), 7, 5);
 
-factory.addPiece(new Queen("black"), 0, 3);
-factory.addPiece(new Queen("white"), 7, 3);
+PieceFactory.addPiece(new Queen("black"), 0, 3);
+PieceFactory.addPiece(new Queen("white"), 7, 3);
 
-factory.addPiece(new King("black"), 0, 4);
-factory.addPiece(new King("white"), 7, 4);
+PieceFactory.addPiece(new King("black"), 0, 4);
+PieceFactory.addPiece(new King("white"), 7, 4);
 
-console.log(factory.board);
+console.log(PieceFactory.board);

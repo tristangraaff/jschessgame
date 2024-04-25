@@ -74,7 +74,6 @@ class PieceSelector {
   };
 
   handleSquareClick(event) {
-    console.log(this.boardLogic);
     const clickedSquare = event.target.closest(".square");
     if (!clickedSquare) return;
 

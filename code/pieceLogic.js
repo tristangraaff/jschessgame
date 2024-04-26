@@ -4,7 +4,7 @@ import cloneDeep from 'https://cdn.skypack.dev/lodash.clonedeep';
 // Add rokeren
 // Add en passant
 // Add pawn reaches end of board
-// Add piece location to constructor instead of double for looping every time!
+// Add piece location to constructor instead of double for looping every time! DOM has to be improved to achieve this
 
   //Alle calls naar PieceFactory mogen in .this maar daarvoor moet eerst DOM file worden gefixt
 
@@ -109,80 +109,11 @@ class Piece {
     PieceFactory._board[validPosition[0]][validPosition[1]] = pieceToBeMoved;
 
     console.log(PieceFactory._board);
-    // locate anemy King
+    // locate enemy King
     // Then call isKingInCheck function from King class?
 
-    this.isKingInCheck(validPosition);
+    King.isKingInCheck(validPosition);
     this.piecePosition = validPosition;
-  };
-
-  locateEnemyKing() {
-
-  };
-
-  isKingInCheck(position) {
-    console.log(position);
-    let kingLocation;
-
-    const piece = PieceFactory._board[position[0]][position[1]];
-    if (piece.constructor.name === "Pawn") {
-      this.instanceIsPawn = true;
-    };
-    const possibleMoves = piece.possibleMoves;
-
-    this.getValidMoves(position, possibleMoves);
-    this.validMoves.forEach(validMove => {
-      const [rowIndex, colIndex] = validMove;
-      if (typeof PieceFactory.board[rowIndex][colIndex] === "object") {
-        if (PieceFactory.board[rowIndex][colIndex].constructor.name === "King") {
-          this.gameState.kingChecked = true;
-          kingLocation = [rowIndex, colIndex];
-        };
-      };
-    });
-
-    if (this.gameState.kingChecked) {
-      this.isCheckmate(kingLocation);
-    };
-  };
-
-  isCheckmate(kingLocation) {
-    this.checkingForCheckMate = true;
-    console.log("START NEW");
-    //Also check for Stalemate here?
-
-    //Checkmate when:
-    // No possible moves for King
-    const [rowIndex, colIndex] = kingLocation;
-    const king = PieceFactory.board[rowIndex][colIndex];
-    this.instanceIsPawn = false;
-    this.getValidMoves(kingLocation, king.possibleMoves);
-
-
-
-    // No pieces can jump in front
-  };
-
-  doesMoveExposeKing(currentPosition, move) {
-    //simulate the move
-    let boardStateClone = cloneDeep(PieceFactory._board);
-    const newPosition = this.calculatePosition(currentPosition, move);
-    for (let i = 0; i < boardStateClone.length; i++) {
-      const row = boardStateClone[i];
-      const rowIndex = i;
-      for (let i = 0; i < row.length; i++) {
-        const col = row[i];
-        const colIndex = i
-        if (typeof col === "object") {
-          console.log(boardStateClone[rowIndex][colIndex]);
-          const position = [rowIndex, colIndex];
-          const kingChecked = this.isKingInCheck(position);
-          console.log(kingChecked);
-        };
-      };
-    };
-
-    //then run isKingInCheck
   };
 };
 
@@ -348,49 +279,53 @@ class King extends Piece {
   // Rokeren toevoegen
   };
 
-  isKingInCheck(position) {
+  static isKingInCheck(piecePosition) {
     let kingLocation;
+    const piece = PieceFactory._board[piecePosition[0]][piecePosition[1]];
+    const possibleMoves = piece.possibleMoves;
 
-    const piece = PieceFactory._board[position[0]][position[1]];
     if (piece.constructor.name === "Pawn") {
       this.instanceIsPawn = true;
     };
-    const possibleMoves = piece.possibleMoves;
 
-    this.getValidMoves(position, possibleMoves);
-    this.validMoves.forEach(validMove => {
+    piece.getValidMoves(piecePosition, possibleMoves);
+    piece.validMoves.forEach(validMove => {
       const [rowIndex, colIndex] = validMove;
       if (typeof PieceFactory.board[rowIndex][colIndex] === "object") {
         if (PieceFactory.board[rowIndex][colIndex].constructor.name === "King") {
-          this.gameState.kingChecked = true;
+          piece.gameState.kingChecked = true;
+          console.log("King checked: " + piece.gameState.kingChecked);
           kingLocation = [rowIndex, colIndex];
         };
       };
     });
 
-    if (this.gameState.kingChecked) {
-      this.isCheckmate(kingLocation);
+    if (piece.gameState.kingChecked) {
+      King.isCheckmate(kingLocation, piece);
     };
   };
 
-  isCheckmate(kingLocation) {
-    this.checkingForCheckMate = true;
-    console.log("START NEW");
+  static isCheckmate(kingLocation, piece) {
+    piece.checkingForCheckMate = true; //This is used in the isEnemyPosition method, because the outcome depends on checking for checkmate or regular situation
     //Also check for Stalemate here?
-
     //Checkmate when:
     // No possible moves for King
     const [rowIndex, colIndex] = kingLocation;
     const king = PieceFactory.board[rowIndex][colIndex];
-    this.instanceIsPawn = false;
-    this.getValidMoves(kingLocation, king.possibleMoves);
+    piece.instanceIsPawn = false;
+    piece.getValidMoves(kingLocation, king.possibleMoves);
 
 
 
-    // No pieces can jump in front
+    // And no pieces can jump in front
+
+
+
+
+    piece.checkingForCheckMate = false;
   };
 
-  doesMoveExposeKing(currentPosition, move) {
+  static doesMoveExposeKing(currentPosition, piece, move) {
     //simulate the move
     let boardStateClone = cloneDeep(PieceFactory._board);
     const newPosition = this.calculatePosition(currentPosition, move);

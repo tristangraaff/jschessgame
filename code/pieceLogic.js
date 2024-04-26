@@ -108,12 +108,8 @@ class Piece {
     PieceFactory._board[currentPosition[0]][currentPosition[1]] = false;
     PieceFactory._board[validPosition[0]][validPosition[1]] = pieceToBeMoved;
 
-    console.log(PieceFactory._board);
-    // locate enemy King
-    // Then call isKingInCheck function from King class?
-
-    King.isKingInCheck(validPosition);
     this.piecePosition = validPosition;
+    King.isKingInCheck(validPosition);
   };
 };
 
@@ -276,33 +272,86 @@ class King extends Piece {
       [1, -1],
       [1, 1]
     ];
-  // Rokeren toevoegen
   };
 
   static isKingInCheck(piecePosition) {
-    let kingLocation;
-    const piece = PieceFactory._board[piecePosition[0]][piecePosition[1]];
-    const possibleMoves = piece.possibleMoves;
+    //Does it make sense to check if a certain piece has checked the King?
+    // I need to check for alle pieces during the next step anyway
 
-    if (piece.constructor.name === "Pawn") {
-      this.instanceIsPawn = true;
-    };
+    //This checks if I'm checking the opponents King, not if I'm exposing myself to a check
 
-    piece.getValidMoves(piecePosition, possibleMoves);
-    piece.validMoves.forEach(validMove => {
-      const [rowIndex, colIndex] = validMove;
-      if (typeof PieceFactory.board[rowIndex][colIndex] === "object") {
-        if (PieceFactory.board[rowIndex][colIndex].constructor.name === "King") {
-          piece.gameState.kingChecked = true;
-          console.log("King checked: " + piece.gameState.kingChecked);
-          kingLocation = [rowIndex, colIndex];
+    const board = PieceFactory._board;
+    let allValidMovesArray = [];
+
+    board.forEach(row => {
+      row.forEach(col => {
+        if (typeof col === "object") {
+          const piece = col;
+          if (piece.color === piece.gameState.currentPlayer) {
+            piece.getValidMoves(piece.piecePosition, piece.possibleMoves);
+            allValidMovesArray.push(...piece.validMoves)
+          };
         };
-      };
+      });
     });
 
-    if (piece.gameState.kingChecked) {
-      King.isCheckmate(kingLocation, piece);
+    for (let i = 0; i < allValidMovesArray.length; i++) {
+      const validMove = allValidMovesArray[i];
+      const boardPosition = PieceFactory._board[validMove[0]][validMove[1]];
+      if (typeof boardPosition === "object") {
+        if (boardPosition.constructor.name === "King") {
+          console.log(boardPosition);
+          return true;
+        };
+      };
     };
+
+    // board.forEach(row => {
+    //   row.forEach(col => {
+    //     if (typeof col === "object") {
+    //       const piece = col;
+    //       if (piece.color === piece.gameState.currentPlayer) {
+    //         piece.getValidMoves(piece.piecePosition, piece.possibleMoves);
+
+    //         for (let i = 0; i < piece.validMoves.length; i++) {
+    //           const validMove = piece.validMoves[i];
+    //           const boardPosition = PieceFactory._board[validMove[0]][validMove[1]];
+    //           console.log(boardPosition);
+    //           if (typeof boardPosition === "object") {
+    //             if (boardPosition.constructor.name === "King") {
+    //               return true;
+    //             };
+    //           };
+    //         };
+    //       };
+    //     };
+    //   });
+    // });
+
+    return false;
+    // let kingLocation;
+    // const piece = PieceFactory._board[piecePosition[0]][piecePosition[1]];
+    // const possibleMoves = piece.possibleMoves;
+
+    // if (piece.constructor.name === "Pawn") {
+    //   this.instanceIsPawn = true;
+    // };
+
+    // piece.getValidMoves(piecePosition, possibleMoves);
+    // piece.validMoves.forEach(validMove => {
+    //   const [rowIndex, colIndex] = validMove;
+    //   if (typeof PieceFactory.board[rowIndex][colIndex] === "object") {
+    //     if (PieceFactory.board[rowIndex][colIndex].constructor.name === "King") {
+    //       piece.gameState.kingChecked = true;
+    //       console.log("King checked: " + piece.gameState.kingChecked);
+    //       kingLocation = [rowIndex, colIndex];
+    //     };
+    //   };
+    // });
+
+    // if (piece.gameState.kingChecked) {
+    //   King.isCheckmate(kingLocation, piece);
+    // };
   };
 
   static isCheckmate(kingLocation, piece) {
@@ -311,9 +360,15 @@ class King extends Piece {
     //Checkmate when:
     // No possible moves for King
     const [rowIndex, colIndex] = kingLocation;
+    console.log(kingLocation);
     const king = PieceFactory.board[rowIndex][colIndex];
+    console.log(king);
     piece.instanceIsPawn = false;
     piece.getValidMoves(kingLocation, king.possibleMoves);
+
+    piece.validMoves.forEach(validMove => {
+      King.doesMoveExposeKing(validMove, piece);
+    });
 
 
 
@@ -323,6 +378,10 @@ class King extends Piece {
 
 
     piece.checkingForCheckMate = false;
+  };
+
+  static doesKingCheckItself() {
+
   };
 
   static doesMoveExposeKing(currentPosition, piece, move) {

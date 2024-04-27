@@ -32,9 +32,16 @@ class Piece {
         this.validMoves.push(...possiblePositionArray);
       };
     });
+
+    return this.validMoves;
   };
 
   isMoveValid(currentPiecePosition, move, possiblePosition, dealingWithPawn) {
+    // console.log("On board: " + this.checkIfPositionIsOnBoard(possiblePosition));
+    // console.log("In the way: " + this.checkIfPieceIsInTheWay(currentPiecePosition, move));
+    // console.log("Squarey empty: " + this.checkIfSquareIsEmpty(possiblePosition));
+    // console.log("Enemy position: " + this.isEnemyPosition(possiblePosition));
+
     if (!this.checkIfPositionIsOnBoard(possiblePosition)) return false;
     if (this.checkIfPieceIsInTheWay(currentPiecePosition, move)) return false;
     if (dealingWithPawn) {
@@ -277,6 +284,7 @@ class King extends Piece {
   static isEnemyKingInCheck() {
     //This checks if I'm checking the opponents King, not if I'm exposing myself to a check
     const allValidMovesArray = King.getAllValidMoves();
+    console.log(allValidMovesArray);
 
     for (let i = 0; i < allValidMovesArray.length; i++) {
       const validMove = allValidMovesArray[i];
@@ -284,6 +292,7 @@ class King extends Piece {
       if (typeof boardPosition === "object") {
         if (boardPosition.constructor.name === "King") {
           const king = boardPosition;
+          console.log("Checked");
           King.isCheckmate(king)
           return true;
         };
@@ -309,30 +318,30 @@ class King extends Piece {
   };
 
   static isCheckmate(king) {
-    console.log(king.piecePosition);
     king.checkingForCheckMate = true; //This is used in the isEnemyPosition method, because the outcome depends on checking for checkmate or regular situation
     // //Also check for Stalemate here?
     // //Checkmate when:
-    // // No possible moves for King
+    // // No possible moves for King && no pieces can be put in front
 
-    //const [rowIndex, colIndex] = king.piecePosition;
     king.instanceIsPawn = false;
     king.getValidMoves(king.piecePosition, king.possibleMoves);
-    console.log(king.validMoves);
     const allValidMovesArray = King.getAllValidMoves();
+    let checkMate;
+    console.log(king.validMoves);
 
-    // piece.validMoves.forEach(validMove => {
-    //   King.doesMoveExposeKing(validMove, piece);
-    // });
+    for (const kingMove of king.validMoves) {
+      if (!allValidMovesArray.some(validMove => validMove.every((val, index) => val === kingMove[index]))) {
+          checkMate = false;
+          break;
+      } else {
+        checkMate = true;
+      };
+    };
 
+    king.checkingForCheckMate = false;
+    return checkMate;
 
-
-    // And no pieces can jump in front
-
-
-
-
-    //piece.checkingForCheckMate = false;
+    //No pieces be put in front
   };
 
   static doesKingCheckItself() {
@@ -360,6 +369,10 @@ class King extends Piece {
 
     //then run isKingInCheck
   };
+
+  static canPieceBePutInFrontKing() {
+
+  };
 };
 
 for (let i = 0; i < 8; i++) {
@@ -382,10 +395,12 @@ PieceFactory.addPiece(new Bishop("black", [0, 5]), 0, 5);
 PieceFactory.addPiece(new Bishop("white", [7, 2]), 7, 2);
 PieceFactory.addPiece(new Bishop("white", [7, 5]), 7, 5);
 
-PieceFactory.addPiece(new Queen("black", [0, 3]), 0, 3);
+//PieceFactory.addPiece(new Queen("black", [0, 3]), 0, 3);
 PieceFactory.addPiece(new Queen("white", [7, 3]), 7, 3);
 
 PieceFactory.addPiece(new King("black", [0, 4]), 0, 4);
 PieceFactory.addPiece(new King("white", [7, 4]), 7, 4);
+
+PieceFactory.addPiece(new King("black", [3, 3]), 3, 3);
 
 console.log(PieceFactory.board);

@@ -109,7 +109,7 @@ class Piece {
     PieceFactory._board[validPosition[0]][validPosition[1]] = pieceToBeMoved;
 
     this.piecePosition = validPosition;
-    King.isKingInCheck(validPosition);
+    King.isEnemyKingInCheck();
   };
 };
 
@@ -274,16 +274,27 @@ class King extends Piece {
     ];
   };
 
-  static isKingInCheck(piecePosition) {
-    //Does it make sense to check if a certain piece has checked the King?
-    // I need to check for alle pieces during the next step anyway
-
+  static isEnemyKingInCheck() {
     //This checks if I'm checking the opponents King, not if I'm exposing myself to a check
+    const allValidMovesArray = King.getAllValidMoves();
 
-    const board = PieceFactory._board;
+    for (let i = 0; i < allValidMovesArray.length; i++) {
+      const validMove = allValidMovesArray[i];
+      const boardPosition = PieceFactory._board[validMove[0]][validMove[1]];
+      if (typeof boardPosition === "object") {
+        if (boardPosition.constructor.name === "King") {
+          const king = boardPosition;
+          King.isCheckmate(king)
+          return true;
+        };
+      };
+    };
+    return false;
+  };
+
+  static getAllValidMoves() {
     let allValidMovesArray = [];
-
-    board.forEach(row => {
+    PieceFactory._board.forEach(row => {
       row.forEach(col => {
         if (typeof col === "object") {
           const piece = col;
@@ -294,81 +305,25 @@ class King extends Piece {
         };
       });
     });
-
-    for (let i = 0; i < allValidMovesArray.length; i++) {
-      const validMove = allValidMovesArray[i];
-      const boardPosition = PieceFactory._board[validMove[0]][validMove[1]];
-      if (typeof boardPosition === "object") {
-        if (boardPosition.constructor.name === "King") {
-          console.log(boardPosition);
-          return true;
-        };
-      };
-    };
-
-    // board.forEach(row => {
-    //   row.forEach(col => {
-    //     if (typeof col === "object") {
-    //       const piece = col;
-    //       if (piece.color === piece.gameState.currentPlayer) {
-    //         piece.getValidMoves(piece.piecePosition, piece.possibleMoves);
-
-    //         for (let i = 0; i < piece.validMoves.length; i++) {
-    //           const validMove = piece.validMoves[i];
-    //           const boardPosition = PieceFactory._board[validMove[0]][validMove[1]];
-    //           console.log(boardPosition);
-    //           if (typeof boardPosition === "object") {
-    //             if (boardPosition.constructor.name === "King") {
-    //               return true;
-    //             };
-    //           };
-    //         };
-    //       };
-    //     };
-    //   });
-    // });
-
-    return false;
-    // let kingLocation;
-    // const piece = PieceFactory._board[piecePosition[0]][piecePosition[1]];
-    // const possibleMoves = piece.possibleMoves;
-
-    // if (piece.constructor.name === "Pawn") {
-    //   this.instanceIsPawn = true;
-    // };
-
-    // piece.getValidMoves(piecePosition, possibleMoves);
-    // piece.validMoves.forEach(validMove => {
-    //   const [rowIndex, colIndex] = validMove;
-    //   if (typeof PieceFactory.board[rowIndex][colIndex] === "object") {
-    //     if (PieceFactory.board[rowIndex][colIndex].constructor.name === "King") {
-    //       piece.gameState.kingChecked = true;
-    //       console.log("King checked: " + piece.gameState.kingChecked);
-    //       kingLocation = [rowIndex, colIndex];
-    //     };
-    //   };
-    // });
-
-    // if (piece.gameState.kingChecked) {
-    //   King.isCheckmate(kingLocation, piece);
-    // };
+    return allValidMovesArray;
   };
 
-  static isCheckmate(kingLocation, piece) {
-    piece.checkingForCheckMate = true; //This is used in the isEnemyPosition method, because the outcome depends on checking for checkmate or regular situation
-    //Also check for Stalemate here?
-    //Checkmate when:
-    // No possible moves for King
-    const [rowIndex, colIndex] = kingLocation;
-    console.log(kingLocation);
-    const king = PieceFactory.board[rowIndex][colIndex];
-    console.log(king);
-    piece.instanceIsPawn = false;
-    piece.getValidMoves(kingLocation, king.possibleMoves);
+  static isCheckmate(king) {
+    console.log(king.piecePosition);
+    king.checkingForCheckMate = true; //This is used in the isEnemyPosition method, because the outcome depends on checking for checkmate or regular situation
+    // //Also check for Stalemate here?
+    // //Checkmate when:
+    // // No possible moves for King
 
-    piece.validMoves.forEach(validMove => {
-      King.doesMoveExposeKing(validMove, piece);
-    });
+    //const [rowIndex, colIndex] = king.piecePosition;
+    king.instanceIsPawn = false;
+    king.getValidMoves(king.piecePosition, king.possibleMoves);
+    console.log(king.validMoves);
+    const allValidMovesArray = King.getAllValidMoves();
+
+    // piece.validMoves.forEach(validMove => {
+    //   King.doesMoveExposeKing(validMove, piece);
+    // });
 
 
 
@@ -377,7 +332,7 @@ class King extends Piece {
 
 
 
-    piece.checkingForCheckMate = false;
+    //piece.checkingForCheckMate = false;
   };
 
   static doesKingCheckItself() {

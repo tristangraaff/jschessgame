@@ -283,7 +283,11 @@ class King extends Piece {
 
   static isEnemyKingInCheck() {
     //This checks if I'm checking the opponents King, not if I'm exposing myself to a check
-    const allValidMovesArray = King.getAllValidMoves();
+    const a = new Set([1, 2, 3]);
+    console.log(a);
+    const pawnCaptureMovesArray = King.getPawnCaptureMoves();
+    console.log(pawnCaptureMovesArray);
+    const allValidMovesArray = King.getAllValidMovesExceptPawns();
     console.log(allValidMovesArray);
 
     for (let i = 0; i < allValidMovesArray.length; i++) {
@@ -298,23 +302,55 @@ class King extends Piece {
         };
       };
     };
+    console.log("Not checked");
     return false;
   };
 
-  static getAllValidMoves() {
+  static mergeArraysofArrays(arr1, arr2) {
+    if (arr1.length === 0) return arr2;
+    if (arr2.length ===0) return arr1;
+
+    const merged = [...arr1, ...arr2];
+    const uniqueMerged = Array.from(new Set(merged.map(JSON.stringify)), JSON.parse);
+    return uniqueMerged;
+  };
+
+  static getAllValidMovesExceptPawns() {
     let allValidMovesArray = [];
     PieceFactory._board.forEach(row => {
       row.forEach(col => {
         if (typeof col === "object") {
           const piece = col;
-          if (piece.color === piece.gameState.currentPlayer) {
+          if (piece.color === piece.gameState.currentPlayer && piece.constructor.name !== "Pawn") {
+            //console.log(piece);
             piece.getValidMoves(piece.piecePosition, piece.possibleMoves);
+            //console.log(piece.validMoves);
             allValidMovesArray.push(...piece.validMoves)
           };
         };
       });
     });
     return allValidMovesArray;
+  };
+
+  static getPawnCaptureMoves() {
+    let pawnCaptureMovesArray = [];
+    PieceFactory._board.forEach(row => {
+      row.forEach(col => {
+        if (typeof col === "object") {
+          const piece = col;
+          if (piece.constructor.name === "Pawn" && piece.color === piece.gameState.currentPlayer) {
+            piece.possibleCaptureMoves.forEach(possibleCaptureMove => {
+              const capturePosition = piece.calculatePosition(piece.piecePosition, possibleCaptureMove);
+              if (piece.checkIfPositionIsOnBoard(capturePosition)) {
+                pawnCaptureMovesArray.push(capturePosition);
+              };
+            });
+          };
+        };
+      });
+    });
+    return pawnCaptureMovesArray;
   };
 
   static isCheckmate(king) {
@@ -327,7 +363,21 @@ class King extends Piece {
     king.getValidMoves(king.piecePosition, king.possibleMoves);
     const allValidMovesArray = King.getAllValidMoves();
     let checkMate;
+    console.log(allValidMovesArray);
     console.log(king.validMoves);
+
+    for (const kingMove of king.validMoves) {
+        const found = allValidMovesArray.some(regularMove => JSON.stringify(kingMove) === JSON.stringify(regularMove));
+        if (found) {
+            console.log(`Child array ${JSON.stringify(kingMove)} found in the second parent array.`);
+        }
+    };
+  
+  // const parentArray1 = [[1, 1], [2, 2]];
+  // const parentArray2 = [[3, 3], [4, 4], [1, 1]];
+  
+  // checkChildArrays(parentArray1, parentArray2);
+  
 
     for (const kingMove of king.validMoves) {
       if (!allValidMovesArray.some(validMove => validMove.every((val, index) => val === kingMove[index]))) {
@@ -338,7 +388,10 @@ class King extends Piece {
       };
     };
 
+    
+
     king.checkingForCheckMate = false;
+    console.log(checkMate);
     return checkMate;
 
     //No pieces be put in front
@@ -388,7 +441,7 @@ PieceFactory.addPiece(new Rook("white", [7, 7]), 7, 7);
 PieceFactory.addPiece(new Knight("black", [0, 1]), 0, 1);
 PieceFactory.addPiece(new Knight("black", [0, 6]), 0, 6);
 PieceFactory.addPiece(new Knight("white", [7, 1]), 7, 1);
-PieceFactory.addPiece(new Knight("white", [6, 6]), 7, 6);
+PieceFactory.addPiece(new Knight("white", [7, 6]), 7, 6);
 
 PieceFactory.addPiece(new Bishop("black", [0, 2]), 0, 2);
 PieceFactory.addPiece(new Bishop("black", [0, 5]), 0, 5);
@@ -398,7 +451,7 @@ PieceFactory.addPiece(new Bishop("white", [7, 5]), 7, 5);
 //PieceFactory.addPiece(new Queen("black", [0, 3]), 0, 3);
 PieceFactory.addPiece(new Queen("white", [7, 3]), 7, 3);
 
-PieceFactory.addPiece(new King("black", [0, 4]), 0, 4);
+//PieceFactory.addPiece(new King("black", [0, 4]), 0, 4);
 PieceFactory.addPiece(new King("white", [7, 4]), 7, 4);
 
 PieceFactory.addPiece(new King("black", [3, 3]), 3, 3);

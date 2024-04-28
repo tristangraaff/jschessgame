@@ -13,7 +13,7 @@ export function removeDuplicateArrays(arr) {
   return Array.from(arraySet).map(JSON.parse);
 };
 
-export function mergeArraysOfArrays() {
+export function mergeArraysOfArrays(arr1, arr2) {
   if (arr1.length === 0) return arr2;
   if (arr2.length ===0) return arr1;
   const merged = [...arr1, ...arr2];

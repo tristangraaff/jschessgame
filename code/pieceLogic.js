@@ -1,4 +1,5 @@
 import { PieceFactory, GameState } from "./main.js";
+import { mergeArraysOfArrays, removeDuplicateArrays } from "./general-utils.js";
 import cloneDeep from 'https://cdn.skypack.dev/lodash.clonedeep';
 
 // Add rokeren
@@ -283,54 +284,25 @@ class King extends Piece {
 
   static isEnemyKingInCheck() {
     //This checks if I'm checking the opponents King, not if I'm exposing myself to a check
-    const a = new Set([1, 2, 3]);
-    console.log(a);
     const pawnCaptureMovesArray = King.getPawnCaptureMoves();
-    console.log(pawnCaptureMovesArray);
-    const allValidMovesArray = King.getAllValidMovesExceptPawns();
-    console.log(allValidMovesArray);
-
+    const allValidMovesExceptPawnsArray = King.getAllValidMovesExceptPawns();
+    let allValidMovesArray = mergeArraysOfArrays(pawnCaptureMovesArray, allValidMovesExceptPawnsArray);
+    allValidMovesArray = removeDuplicateArrays(allValidMovesArray);
+  
     for (let i = 0; i < allValidMovesArray.length; i++) {
       const validMove = allValidMovesArray[i];
       const boardPosition = PieceFactory._board[validMove[0]][validMove[1]];
       if (typeof boardPosition === "object") {
-        if (boardPosition.constructor.name === "King") {
+        if (boardPosition.constructor.name === "King" && boardPosition.color !== GameState.currentPlayer) {
           const king = boardPosition;
           console.log("Checked");
-          King.isCheckmate(king)
+          King.isCheckmate(king);
           return true;
         };
       };
     };
     console.log("Not checked");
     return false;
-  };
-
-  static mergeArraysofArrays(arr1, arr2) {
-    if (arr1.length === 0) return arr2;
-    if (arr2.length ===0) return arr1;
-
-    const merged = [...arr1, ...arr2];
-    const uniqueMerged = Array.from(new Set(merged.map(JSON.stringify)), JSON.parse);
-    return uniqueMerged;
-  };
-
-  static getAllValidMovesExceptPawns() {
-    let allValidMovesArray = [];
-    PieceFactory._board.forEach(row => {
-      row.forEach(col => {
-        if (typeof col === "object") {
-          const piece = col;
-          if (piece.color === piece.gameState.currentPlayer && piece.constructor.name !== "Pawn") {
-            //console.log(piece);
-            piece.getValidMoves(piece.piecePosition, piece.possibleMoves);
-            //console.log(piece.validMoves);
-            allValidMovesArray.push(...piece.validMoves)
-          };
-        };
-      });
-    });
-    return allValidMovesArray;
   };
 
   static getPawnCaptureMoves() {
@@ -353,6 +325,22 @@ class King extends Piece {
     return pawnCaptureMovesArray;
   };
 
+  static getAllValidMovesExceptPawns() {
+    let allValidMovesArray = [];
+    PieceFactory._board.forEach(row => {
+      row.forEach(col => {
+        if (typeof col === "object") {
+          const piece = col;
+          if (piece.color === piece.gameState.currentPlayer && piece.constructor.name !== "Pawn") {
+            piece.getValidMoves(piece.piecePosition, piece.possibleMoves);
+            allValidMovesArray.push(...piece.validMoves)
+          };
+        };
+      });
+    });
+    return allValidMovesArray;
+  };
+
   static isCheckmate(king) {
     king.checkingForCheckMate = true; //This is used in the isEnemyPosition method, because the outcome depends on checking for checkmate or regular situation
     // //Also check for Stalemate here?
@@ -361,40 +349,54 @@ class King extends Piece {
 
     king.instanceIsPawn = false;
     king.getValidMoves(king.piecePosition, king.possibleMoves);
-    const allValidMovesArray = King.getAllValidMoves();
+    const pawnCaptureMovesArray = King.getPawnCaptureMoves();
+    const allValidMovesExceptPawnsArray = King.getAllValidMovesExceptPawns();
+    let allValidMovesArray = mergeArraysOfArrays(pawnCaptureMovesArray, allValidMovesExceptPawnsArray);
+    allValidMovesArray = removeDuplicateArrays(allValidMovesArray);
+
     let checkMate;
-    console.log(allValidMovesArray);
-    console.log(king.validMoves);
 
-    for (const kingMove of king.validMoves) {
-        const found = allValidMovesArray.some(regularMove => JSON.stringify(kingMove) === JSON.stringify(regularMove));
-        if (found) {
-            console.log(`Child array ${JSON.stringify(kingMove)} found in the second parent array.`);
-        }
-    };
-  
-  // const parentArray1 = [[1, 1], [2, 2]];
-  // const parentArray2 = [[3, 3], [4, 4], [1, 1]];
-  
-  // checkChildArrays(parentArray1, parentArray2);
-  
+    King.removeSelfCheckingMoves(allValidMovesArray, king);
 
-    for (const kingMove of king.validMoves) {
-      if (!allValidMovesArray.some(validMove => validMove.every((val, index) => val === kingMove[index]))) {
-          checkMate = false;
-          break;
-      } else {
-        checkMate = true;
-      };
-    };
 
-    
+
+    // for (const kingMove of king.validMoves) {
+    //     const found = allValidMovesArray.some(regularMove => JSON.stringify(kingMove) === JSON.stringify(regularMove));
+    //     if (found) {
+    //         console.log(`Child array ${JSON.stringify(kingMove)} found in the second parent array.`);
+    //     };
+    // };
+  
+    // for (const kingMove of king.validMoves) {
+    //   if (!allValidMovesArray.some(validMove => validMove.every((val, index) => val === kingMove[index]))) {
+    //       checkMate = false;
+    //       break;
+    //   } else {
+    //     checkMate = true;
+    //   };
+    // };
 
     king.checkingForCheckMate = false;
-    console.log(checkMate);
+    //console.log(checkMate);
     return checkMate;
 
     //No pieces be put in front
+  };
+
+  static removeSelfCheckingMoves(allMovesArray, king) {
+    //Need to get all Valid Moves of white
+    //Need to get all possible moves of let's say black king
+    //If King can capture a piece:
+      //Check if piece is covered by friendly piece
+      //This means that piece location is found in possible moves of covering piece, and no pieces are in between
+
+    for (const kingMove of king.validMoves) {
+      allMovesArray.forEach(move => {
+        if (JSON.stringify(kingMove) === JSON.stringify(move)) {
+          console.log(`Child array ${JSON.stringify(kingMove)} found in the second parent array.`);
+        };
+      });
+    };
   };
 
   static doesKingCheckItself() {

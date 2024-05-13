@@ -285,7 +285,7 @@ class King extends Piece {
   static isEnemyKingInCheck() {
     //This checks if I'm checking the opponents King, not if I'm exposing myself to a check
     const pawnCaptureMovesArray = King.getPawnCaptureMoves();
-    const allValidMovesExceptPawnsArray = King.getAllValidMovesExceptPawns();
+    const allValidMovesExceptPawnsArray = King.getAllPiecesValidMovesExceptPawns();
     let allValidMovesArray = mergeArraysOfArrays(pawnCaptureMovesArray, allValidMovesExceptPawnsArray);
     allValidMovesArray = removeDuplicateArrays(allValidMovesArray);
   
@@ -325,7 +325,7 @@ class King extends Piece {
     return pawnCaptureMovesArray;
   };
 
-  static getAllValidMovesExceptPawns() {
+  static getAllPiecesValidMovesExceptPawns() {
     let allValidMovesArray = [];
     PieceFactory._board.forEach(row => {
       row.forEach(col => {
@@ -350,13 +350,16 @@ class King extends Piece {
     king.instanceIsPawn = false;
     king.getValidMoves(king.piecePosition, king.possibleMoves);
     const pawnCaptureMovesArray = King.getPawnCaptureMoves();
-    const allValidMovesExceptPawnsArray = King.getAllValidMovesExceptPawns();
-    let allValidMovesArray = mergeArraysOfArrays(pawnCaptureMovesArray, allValidMovesExceptPawnsArray);
-    allValidMovesArray = removeDuplicateArrays(allValidMovesArray);
+    const allPiecesValidMovesExceptPawnsArray = King.getAllPiecesValidMovesExceptPawns();
+    let allPiecesValidMovesArray = mergeArraysOfArrays(pawnCaptureMovesArray, allPiecesValidMovesExceptPawnsArray);
+    allPiecesValidMovesArray = removeDuplicateArrays(allPiecesValidMovesArray);
+    console.log(allPiecesValidMovesArray);
 
     let checkMate;
 
-    King.removeSelfCheckingMoves(allValidMovesArray, king);
+    King.removeSelfCheckingMoves(allPiecesValidMovesArray, king);
+    console.log(king.validMoves);
+    //console.log(king.validMoves);
 
 
 
@@ -394,6 +397,10 @@ class King extends Piece {
       allMovesArray.forEach(move => {
         if (JSON.stringify(kingMove) === JSON.stringify(move)) {
           console.log(`Child array ${JSON.stringify(kingMove)} found in the second parent array.`);
+          // king.validMoves = king.validMoves.filter(kingMove => {
+          //   return !(JSON.stringify(move) === JSON.stringify())
+          // })
+          console.log(kingMove);
         };
       });
     };

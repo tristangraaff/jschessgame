@@ -94,6 +94,7 @@ class PieceSelector {
 
   selectPiece(clickedSquare) {
     const pieceData = JSON.parse(clickedSquare.getAttribute("data-piece"));
+    console.log(pieceData)
 
     if (pieceData.color !== this.gameState.currentPlayer) {
       //this.deselectPiece();
@@ -152,6 +153,7 @@ class PieceSelector {
     piece.getValidMoves(currentPosition, possibleMoves);
     this.validMoves = piece.validMoves;
     this.validMoves = removeDuplicateArrays(this.validMoves);
+    console.log(this.validMoves)
     return piece.validMoves
   };
 

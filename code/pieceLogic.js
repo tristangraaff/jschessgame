@@ -38,10 +38,10 @@ class Piece {
   };
 
   isMoveValid(currentPiecePosition, move, possiblePosition, dealingWithPawn) {
-    // console.log("On board: " + this.checkIfPositionIsOnBoard(possiblePosition));
-    // console.log("In the way: " + this.checkIfPieceIsInTheWay(currentPiecePosition, move));
-    // console.log("Squarey empty: " + this.checkIfSquareIsEmpty(possiblePosition));
-    // console.log("Enemy position: " + this.isEnemyPosition(possiblePosition));
+     console.log("On board: " + this.checkIfPositionIsOnBoard(possiblePosition));
+     console.log("In the way: " + this.checkIfPieceIsInTheWay(currentPiecePosition, move));
+     console.log("Squarey empty: " + this.checkIfSquareIsEmpty(possiblePosition));
+     console.log("Enemy position: " + this.isEnemyPosition(possiblePosition));
 
     if (!this.checkIfPositionIsOnBoard(possiblePosition)) return false;
     if (this.checkIfPieceIsInTheWay(currentPiecePosition, move)) return false;
@@ -358,7 +358,7 @@ class King extends Piece {
     let checkMate;
 
     King.removeSelfCheckingMoves(allPiecesValidMovesArray, king);
-    console.log(king.validMoves);
+    //console.log(king.validMoves);
     //console.log(king.validMoves);
 
 
@@ -393,14 +393,16 @@ class King extends Piece {
       //Check if piece is covered by friendly piece
       //This means that piece location is found in possible moves of covering piece, and no pieces are in between
 
+    //This has to somehow be run whenever getValidMoves is called because valid moves are reset after each turn  
     for (const kingMove of king.validMoves) {
       allMovesArray.forEach(move => {
         if (JSON.stringify(kingMove) === JSON.stringify(move)) {
-          console.log(`Child array ${JSON.stringify(kingMove)} found in the second parent array.`);
-          // king.validMoves = king.validMoves.filter(kingMove => {
-          //   return !(JSON.stringify(move) === JSON.stringify())
-          // })
+          //console.log(`Child array ${JSON.stringify(kingMove)} found in the second parent array.`);
+          king.validMoves = king.validMoves.filter(kingMove => {
+            return !(JSON.stringify(move) === JSON.stringify(kingMove))
+          });
           console.log(kingMove);
+          console.log(king.validMoves);
         };
       });
     };

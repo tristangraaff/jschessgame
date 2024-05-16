@@ -403,6 +403,7 @@ class King extends Piece {
           });
           console.log(kingMove);
           console.log(king.validMoves);
+          //Test
         };
       });
     };

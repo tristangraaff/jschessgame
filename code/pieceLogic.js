@@ -38,10 +38,10 @@ class Piece {
   };
 
   isMoveValid(currentPiecePosition, move, possiblePosition, dealingWithPawn) {
-     console.log("On board: " + this.checkIfPositionIsOnBoard(possiblePosition));
-     console.log("In the way: " + this.checkIfPieceIsInTheWay(currentPiecePosition, move));
-     console.log("Squarey empty: " + this.checkIfSquareIsEmpty(possiblePosition));
-     console.log("Enemy position: " + this.isEnemyPosition(possiblePosition));
+    //  console.log("On board: " + this.checkIfPositionIsOnBoard(possiblePosition));
+    //  console.log("In the way: " + this.checkIfPieceIsInTheWay(currentPiecePosition, move));
+    //  console.log("Squarey empty: " + this.checkIfSquareIsEmpty(possiblePosition));
+    //  console.log("Enemy position: " + this.isEnemyPosition(possiblePosition));
 
     if (!this.checkIfPositionIsOnBoard(possiblePosition)) return false;
     if (this.checkIfPieceIsInTheWay(currentPiecePosition, move)) return false;
@@ -280,6 +280,10 @@ class King extends Piece {
       [1, -1],
       [1, 1]
     ];
+  };
+
+  getValidKingMoves() {
+
   };
 
   static isEnemyKingInCheck() {

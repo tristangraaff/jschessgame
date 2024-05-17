@@ -149,7 +149,6 @@ class PieceSelector {
   getValidMovesFromPieceLogic(piece, rowIndex, colIndex) {
     const possibleMoves = piece.possibleMoves;
     const currentPosition = [rowIndex, colIndex];
-    //console.log(piece);
     piece.getValidMoves(currentPosition, possibleMoves);
     this.validMoves = piece.validMoves;
     this.validMoves = removeDuplicateArrays(this.validMoves);
